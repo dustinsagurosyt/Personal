@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "attention-reset",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-03",
+  "workers_dev": true,
+  "assets": {"directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/*"]},
+  "kv_namespaces": [],
+  "triggers": {"crons": ["0,5 16,17 * * *", "30 3,4 * * *"]},
+  "vars": {"TIMEZONE": "America/Los_Angeles", "FOCUS_TIME": "09:00", "CHECKIN_TIME": "20:30", "FOCUS_OVERRIDES": "{\"2026-11-06\":\"09:05\",\"2026-11-09\":\"09:05\"}"}
+}

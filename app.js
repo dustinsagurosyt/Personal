@@ -57,7 +57,7 @@ function renderProgress(){
   $('monthTitle').textContent=MONTHS[viewMonth];$('bestStreak').textContent=stats.best;$('completedDays').textContent=stats.count;$('completionRate').textContent=stats.total?stats.rate+'%':'—';
 
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
-  const dates=monthDates(viewYear,viewMonth),offset=(parseDate(dates[0]).getDay()+6)%7;
+  const dates=monthDates(viewYear,viewMonth),offset=parseDate(dates[0]).getDay();
   for(let i=0;i<offset;i++){const blank=document.createElement('span');blank.className='calendar-spacer';blank.setAttribute('aria-hidden','true');grid.append(blank)}
   for(const key of dates){
     const record=recordFor(state,key),done=complete(record),partial=!done&&(record.focus===true||videoGoal(record));

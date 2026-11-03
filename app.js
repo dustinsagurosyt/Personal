@@ -55,7 +55,7 @@ function renderTabs(){
 function renderProgress(){
   const stats=monthStats(state,viewYear,viewMonth,today);
   $('monthTitle').textContent=MONTHS[viewMonth];$('bestStreak').textContent=stats.best;$('completedDays').textContent=stats.count;$('completionRate').textContent=stats.total?stats.rate+'%':'—';
-  $('monthSummary').textContent=stats.total?`${stats.count} of ${stats.total} tracked days`:'No tracked days yet';
+
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
   const dates=monthDates(viewYear,viewMonth),offset=(parseDate(dates[0]).getDay()+6)%7;
   for(let i=0;i<offset;i++){const blank=document.createElement('span');blank.className='calendar-spacer';blank.setAttribute('aria-hidden','true');grid.append(blank)}
@@ -81,7 +81,7 @@ function renderDailyStatus(){
 function renderDay(){
   const record=currentRecord();
   $('dayTitle').textContent=selected===today?'Today, '+parseDate(selected).toLocaleDateString(undefined,{month:'short',day:'numeric'}):parseDate(selected).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-  $('dayEyebrow').textContent=selected===today?'YOUR TWO-MINUTE CHECK-IN':'YOUR SAVED DAILY CHECK-IN';
+
   $('focus').checked=record.focus===true;$('minutes').value=record.minutes??'';$('task').value=record.task??'';
   for(const id of ['focus','minutes','task','restart'])$(id).disabled=isFuture();$('futureMessage').hidden=!isFuture();
   renderDailyStatus();renderSave();renderTimer();

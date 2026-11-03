@@ -1,5 +1,0 @@
-# For local development only. Copy to .dev.vars and use your own TEST keys.
-# Production keys are generated and saved securely by npm run setup.
-VAPID_PUBLIC_KEY=YOUR_PUBLIC_KEY
-VAPID_PRIVATE_KEY=YOUR_PRIVATE_KEY
-VAPID_SUBJECT=https://example.com

@@ -1,60 +1,55 @@
 # Attention Reset
 
-An everyday iPhone home-screen tracker with a simple monthly calendar. No server, extra account, or notification setup.
+An everyday iPhone home-screen tracker with a monthly calendar and a five-minute gratitude journal. No server, extra account, or notification setup.
 
 ## Two daily goals
 
-- Complete one **20-minute focus session**. Use the built-in timer or mark the checkbox after a session you timed another way.
-- Keep short-form video use **strictly below 60 minutes** for the day. Enter your actual total; **60 minutes does not meet this goal**. A blank entry is unrecorded, not zero.
+- **Five-minute gratitude:** tap **Write** to open a circular five-minute timer and a writing space. On today’s first session the timer starts automatically. Write what you’re grateful for; the entry saves on this device as you type. Tap the checkmark to save and complete the goal. You can finish early when your entry is ready, or mark an existing written entry complete from the checklist. Empty or whitespace-only entries cannot count as complete.
+- **Short videos under 60 minutes:** enter the whole day’s total. The limit is strictly below 60; 60 minutes does not meet this goal. Blank is unrecorded, not zero. The app does not measure or block other apps.
 
-A day turns green only when both goals are met. The phone-away checkbox and thought-capture controls have been removed. Older saved entries and any legacy fields remain in your downloadable record.
+A day turns green when both goals are met.
 
-## Monthly progress
+## Gratitude timer
 
-The app opens to the current month and today's checklist. Use the January–December tabs, the previous/next arrows, or swipe left and right on the calendar to browse history. The year selector lets you revisit earlier years. Upcoming months and days cannot be edited.
+The writing screen has a soft circular progress face, a five-minute countdown, pause/resume, a central finish checkmark, reset, and close controls.
 
-Tap a past day to view or correct its checklist. Green means both goals are met; a light green square with a dot means one goal is met. Today has a blue outline. The selected day has an additional outline.
+- Closing the screen keeps your draft and does not stop a running timer.
+- Resetting the timer keeps your writing.
+- A saved deadline keeps elapsed time through backgrounding and reloads. The timer is silent; it does not send an alarm or notification.
+- When five minutes end, your entry is not automatically marked complete. Use the checkmark when the writing is ready.
+- Entries are saved for the date you opened. Browsing a different month or passing midnight does not move an entry to another day.
+- If a timer is running for another day, you can read or write a different entry without replacing it; use **Return to active session** to go back.
 
-The three statistics apply to the month you're viewing:
+A separate two-minute restart remains available after a slip. Finishing that short restart does not complete the gratitude goal.
 
-- **Best streak:** longest consecutive run of completed days within that month. A missed day does not erase that record.
-- **Days done:** days with both goals completed.
-- **Completion:** completed days divided by tracked calendar days from your tracking start through today. Future days and days before you started are excluded. A month with no tracked days displays a dash.
+## History and earlier focus records
 
-The app continues month after month and year after year. There is no seven-day cutoff.
+The app opens to the current month and today’s checklist. Browse with the January–December tabs, previous/next arrows, or left/right swipes on the calendar. Weeks begin on Sunday. The year selector shows earlier years. Upcoming days cannot be edited.
 
-## Timer and gentle restarts
+Tap a past day to read or edit its record. Green means both goals are met, light green with a dot means one goal is met, and today has a blue outline. The statistics show that month’s best streak, days completed, and completion rate. Future days and days before tracking began are excluded from the rate.
 
-The timer uses a saved deadline so it keeps time when you switch away or reload. It is silent and does not send an alarm or notification. When it finishes, confirm that you completed 20 minutes; the app does not mark the focus goal automatically. A session stays attached to the day it started, even if you browse another month.
+The five-minute journal replaces the 20-minute focus goal from the day this update is first opened. Older focus-session achievements stay in history and appear as **Previous focus session** when you view those days. They are not presented as newly written gratitude entries. Earlier saved fields are retained in your backup. Old 20-minute timers are not reused as five-minute timers.
 
-After a slip, take a two-minute restart. That records a small return and opens a two-minute timer; it does not count as a completed 20-minute session or erase earlier progress.
+## Publish and install
 
-## Publish with GitHub Pages
+Publish the repository with GitHub Pages: **Settings → Pages → Deploy from a branch → main → /(root) → Save**. If Pages is already enabled, changes to `main` publish through its existing build. No build command or dependency installation is required.
 
-1. Open [Pages settings](https://github.com/dustinsagurosyt/Personal/settings/pages).
-2. Choose **Deploy from a branch**, then **main** and **/(root)**.
-3. Click **Save** and wait for GitHub to show the published address.
+Expected published address: https://dustinsagurosyt.github.io/Personal/
 
-Expected address after publication: https://dustinsagurosyt.github.io/Personal/
-
-If Pages is already enabled, changes to `main` publish through the existing Pages build. There is no build command or dependency installation.
-
-## Add to iPhone
-
-Open the published address in Safari, tap **Share → Add to Home Screen**, turn on **Open as Web App** if shown, then tap **Add**. Open it from its home-screen icon each day.
+Open that address in iPhone Safari, then **Share → Add to Home Screen → Open as Web App** if shown, then **Add**.
 
 ## Your data
 
-Progress saves in the same `attention-reset-v1` browser record used by the previous version, so an update at the same app address keeps your history. Records do not transfer between different app addresses, devices, or browsers. Clearing browser data removes them. Use **Download my record** for a JSON backup.
+Entries use the same `attention-reset-v1` browser record as the previous version, so updates at the same app address keep history. A separate timer record stores the running gratitude session. Your gratitude writing, video totals, and progress stay in this browser on this device; they are not sent to GitHub or another service. Clearing browser data removes them. Use **Download my record** for a JSON backup.
 
-Your entries are not uploaded to GitHub. The published app has a public address; your records stay on your device. If storage is unavailable, the app shows a saving warning. If a previous record cannot be read, saving pauses to protect it and the download button exports the original data.
+Records do not automatically transfer between devices, browsers, or app addresses. Saving errors appear in the app. If a previous record cannot be read, saving pauses to protect it, and downloading exports the original stored record.
 
 ## Checks
 
-With Node.js available, run:
+With Node.js available:
 
 ```sh
 node --test tests/*.test.mjs
 ```
 
-These checks cover the strict video limit, monthly history, leap years, old saved records, tab/swipe navigation, timer persistence, session dates, and two-minute restarts. No installation is needed to run the checks.
+Checks cover writing persistence, blank-entry validation, timer pause/resume/reset/reload, date ownership, historical focus records, Sunday-first months, leap years, the strict video limit, and two-minute restarts.

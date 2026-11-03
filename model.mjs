@@ -20,7 +20,12 @@ export function videoGoal(record = {}) {
   const value = Number(raw);
   return Number.isFinite(value) && value >= 0 && value < 60;
 }
-export function complete(record = {}) { return record?.focus === true && videoGoal(record); }
+export function practiceGoal(record = {}, key, state = {}) {
+  if (typeof record?.gratitudeDone === 'boolean') return record.gratitudeDone && typeof record.gratitudeText === 'string' && !!record.gratitudeText.trim();
+  // Keep prior focus-session achievements in their original historical days.
+  return !!key && !!state.gratitudeSince && key < state.gratitudeSince && record?.focus === true;
+}
+export function complete(record = {}, key, state = {}) { return practiceGoal(record,key,state) && videoGoal(record); }
 export function monthDates(year, month) {
   return Array.from({length:new Date(year,month+1,0).getDate()},(_,i)=>dateKey(new Date(year,month,i+1,12)));
 }
@@ -33,16 +38,16 @@ export function monthStats(state, year, month, today) {
   const dates = monthDates(year,month).filter(key=>key >= start && key <= today);
   let count=0,best=0,run=0;
   for (const key of dates) {
-    if (complete(state.days[key])) { count++;run++;best=Math.max(best,run); }
+    if (complete(state.days[key],key,state)) { count++;run++;best=Math.max(best,run); }
     else run=0;
   }
   return {count,best,total:dates.length,rate:dates.length?Math.round(count/dates.length*1000)/10:0};
 }
 export function normalizeState(value,today) {
-  if (!value || typeof value !== 'object' || !value.days || typeof value.days !== 'object' || Array.isArray(value.days)) return {start:today,days:{}};
+  if (!value || typeof value !== 'object' || !value.days || typeof value.days !== 'object' || Array.isArray(value.days)) return {start:today,gratitudeSince:today,days:{}};
   // Keep legacy notes and other saved fields in the backup, without displaying
   // or requiring the removed habits in the everyday interface.
-  return {...value,start:parseDate(value.start)?value.start:today,days:{...value.days}};
+  return {...value,start:parseDate(value.start)?value.start:today,gratitudeSince:parseDate(value.gratitudeSince)?value.gratitudeSince:today,days:{...value.days}};
 }
 export function recordFor(state,key) {
   const record=state.days[key];

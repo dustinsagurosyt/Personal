@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=4">
+  <link rel="stylesheet" href="style.css?v=6">
 </head>
 <body>
 <main>
@@ -30,17 +30,26 @@
   <section id="dailyPanel" class="daily-panel" aria-labelledby="dayTitle">
     <div class="daily-heading"><div><h2 id="dayTitle">Today</h2></div><span id="dailyStatus" class="daily-status">0 of 2</span></div>
     <p id="futureMessage" class="muted" hidden>This day hasn’t arrived yet. Come back today for one small step.</p>
-    <div class="goal-row"><label class="goal-label" for="focus"><input type="checkbox" id="focus"><span><strong>20 minutes of focus</strong></span></label></div>
+    <div class="goal-row gratitude-row"><label class="goal-label" for="gratitudeDone"><input type="checkbox" id="gratitudeDone"><span><strong id="gratitudeLabel">5-minute gratitude</strong></span></label><button id="openJournal" class="write-button">Write <span aria-hidden="true">↗</span></button></div>
     <div class="goal-row video-row"><div class="goal-label"><span id="videoMark" class="goal-mark" aria-hidden="true"></span><label for="minutes"><strong>Short videos under 60 min</strong></label></div><div class="minute-entry"><input type="number" id="minutes" min="0" max="1440" step="1" placeholder="—" inputmode="numeric" aria-label="Short-form video minutes" aria-describedby="videoFeedback"><span>min</span></div></div>
     <p id="videoFeedback" class="feedback" aria-live="polite">Enter your video minutes when you’re ready.</p>
     <p id="saved" class="save-state" role="status" aria-live="polite">Saved on this device.</p>
-
-    <details id="focusTools" class="focus-tools"><summary><span>Use the focus timer</span><span class="summary-arrow" aria-hidden="true">↗</span></summary><div class="timer-content"><label class="field-label" for="task">One small task <span class="muted">(optional)</span></label><input id="task" type="text" maxlength="200" placeholder="Read a few pages, finish an email…"><p id="timerContext" class="muted">A little room for one thing.</p><div id="clock" class="clock" role="timer" aria-label="Focus timer">20:00</div><div class="timer-actions"><button id="startTimer" class="primary-button">Start 20 minutes</button><button id="resetTimer" class="secondary-button">Reset</button></div><p id="timerNote" class="muted" aria-live="polite">Start, then set your phone aside. The timer is silent.</p><button id="confirmFocus" class="secondary-button confirm-focus" hidden>I completed 20 minutes</button></div></details>
   </section>
 
   <section class="restart"><div class="restart-icon" aria-hidden="true">↻</div><div><h3>A fresh start is always available.</h3><p>A missed day stays one day. Choose one small action and give it two minutes.</p><button id="restart" class="text-button">Take a 2-minute restart <span aria-hidden="true">↗</span></button><p id="restartFeedback" class="muted" aria-live="polite"></p></div></section>
   <footer><button id="export" class="text-button">Download my record ↓</button><p>Your entries stay in this browser on this device. No notifications or extra account.</p></footer>
 </main>
-<script type="module" src="app.js?v=5"></script>
+<dialog id="journalDialog" class="journal-dialog" aria-labelledby="journalTitle">
+  <div class="journal-shell">
+    <div class="journal-top"><span id="journalDate" class="journal-date"></span><span class="session-badge"><i aria-hidden="true"></i><span id="sessionBadge">Gratitude</span></span><button id="closeJournal" class="close-journal" aria-label="Close journal">×</button></div>
+    <h2 id="journalTitle">What am I grateful for?</h2>
+    <div id="timerFace" class="timer-face"><span id="sessionIcon" class="session-icon" aria-hidden="true">🌿</span><div id="clock" class="journal-clock" role="timer" aria-label="Gratitude timer">05:00</div><span id="timerDuration" class="timer-duration">5 min</span><span class="timer-dash" aria-hidden="true"></span></div>
+    <div id="writingPanel" class="writing-panel"><label class="sr-only" for="gratitudeText">What are you grateful for on this day?</label><textarea id="gratitudeText" rows="5" maxlength="10000" placeholder="Today, I’m grateful for…"></textarea><p id="journalSaved" class="journal-saved" role="status">Saved on this device.</p></div>
+    <div class="journal-controls"><button id="startTimer" class="session-control" aria-label="Start timer"><span id="pauseIcon" aria-hidden="true">▶</span></button><button id="finishJournal" class="finish-journal" aria-label="Finish gratitude entry"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="m11 25 9 9 19-21"/></svg></button><button id="resetTimer" class="session-control" aria-label="Reset timer"><span aria-hidden="true">↻</span></button></div>
+    <p id="timerNote" class="timer-note" role="status" aria-live="polite"></p><button id="activeSession" class="text-button active-session" hidden>Return to active session</button>
+  </div>
+</dialog>
+
+<script type="module" src="app.js?v=6"></script>
 </body>
 </html>

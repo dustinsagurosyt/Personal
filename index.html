@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=38">
+  <link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 <main>
@@ -23,9 +23,9 @@
     </div>
   </header>
 
-  <div id="homeView">
+  <div id="homeView" class="app-view">
   <section class="progress" aria-label="Monthly progress">
-    <div class="month-heading"><h1 id="monthTitle">Your month</h1><label class="year-picker"><span class="sr-only">Year</span><select id="year" aria-label="Year"></select><span aria-hidden="true">⌄</span></label></div>
+    <div class="tab-heading"><h1 id="monthTitle">Your month</h1><label class="year-picker"><span class="sr-only">Year</span><select id="year" aria-label="Year"></select><span aria-hidden="true">⌄</span></label></div>
     <div class="month-navigation"><button id="previousMonth" class="arrow-button" aria-label="Previous month">‹</button><div id="monthTabs" class="month-tabs" role="tablist" aria-label="Months"></div><button id="nextMonth" class="arrow-button" aria-label="Next month">›</button></div>
     <div id="calendarPanel" class="calendar-panel" role="tabpanel" aria-labelledby="monthTitle"><div class="weekdays" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div id="calendar" class="calendar" aria-label="Days in this month"></div></div>
     <div class="stat-line"><div class="stats" aria-label="Statistics for this month">
@@ -46,11 +46,12 @@
   <footer><button id="export" class="text-button">Download my record ↓</button></footer>
   </div>
 
-  <section id="gardenView" aria-labelledby="gardenTitle" hidden>
-    <div class="garden-header">
-      <div><h1 id="gardenTitle">Your garden</h1><p id="gardenDays"></p></div>
+  <section id="gardenView" class="app-view" aria-labelledby="gardenTitle" hidden>
+    <div class="tab-heading">
+      <h1 id="gardenTitle">Your garden</h1>
       <div class="garden-totals"><strong id="gardenPlants"></strong></div>
     </div>
+    <p id="gardenDays" class="tab-description"></p>
     <div id="gardenPlots" class="garden-plots" aria-label="Garden plots"></div>
     <div class="next-plot" id="nextPlot" hidden>
       <svg width="32" height="34" viewBox="0 0 32 34" aria-hidden="true">

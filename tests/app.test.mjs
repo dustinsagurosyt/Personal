@@ -161,3 +161,14 @@ test('the selected month moves through the four visible slots before the strip s
   h.el('nextMonth').onclick();
   assert.equal(active(),1);
 });
+
+test('the year picker and calendar navigation start in 2025',()=>{
+  const h=harness({'attention-reset-v1':JSON.stringify({start:'2022-01-01',days:{}})});
+  assert.deepEqual(h.el('year').children.map(option=>option.value),[2026,2025]);
+  h.run('showMonth(2025,0)');
+  assert.equal(h.el('previousMonth').disabled,true);
+  assert.deepEqual(h.el('monthTabs').children.map(tab=>tab.textContent),['Jan','Feb','Mar','Apr']);
+  h.el('previousMonth').onclick();
+  assert.equal(h.el('monthTitle').textContent,'January');
+  assert.equal(h.el('year').value,2025);
+});

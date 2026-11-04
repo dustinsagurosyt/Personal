@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart, rewardProgress } from './model.mjs?v=14';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=14';
 import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);
@@ -25,7 +25,7 @@ try {
   }
 } catch {}
 const upcomingMonth=()=>{const d=parseDate(today);return new Date(d.getFullYear(),d.getMonth()+1,1,12)};
-const firstYear=()=>Math.max(1900,Math.min(Number(trackingStart(state,today).slice(0,4)),Number(today.slice(0,4))-4));
+const FIRST_YEAR=2025;
 const longDate=key=>parseDate(key).toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
 const isFuture=()=>selected>today;
 function currentRecord(){return recordFor(state,selected)}
@@ -49,7 +49,7 @@ function setRecord(patch,key=selected){
 }
 function renderYears(){
   const select=$('year');select.replaceChildren();
-  for(let year=upcomingMonth().getFullYear();year>=firstYear();year--){const option=document.createElement('option');option.value=year;option.textContent=year;select.append(option)}
+  for(let year=upcomingMonth().getFullYear();year>=FIRST_YEAR;year--){const option=document.createElement('option');option.value=year;option.textContent=year;select.append(option)}
   select.value=viewYear;
 }
 const motionAllowed=()=>!matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -65,7 +65,7 @@ function renderTabs(animate=false){
   const previousStart=firstVisible?parseDate(firstVisible):current;
   const selectedMonth=viewYear*12+viewMonth;
   const previousMonth=previousStart.getFullYear()*12+previousStart.getMonth();
-  const start=Math.min(selectedMonth,Math.max(previousMonth-(firstVisible?0:2),selectedMonth-3));
+  const start=Math.min(selectedMonth,Math.max(FIRST_YEAR*12,previousMonth-(firstVisible?0:2),selectedMonth-3));
   const buttons=[];
   for(let step=0;step<4;step++){
     const date=new Date(Math.floor(start/12),start%12+step,1,12);
@@ -73,7 +73,7 @@ function renderTabs(animate=false){
     const key=dateKey(date);
     const button=existing.get(key)||document.createElement('button');
     button.dataset.month=key;
-    button.className='month-tab';button.id='month-tab-'+index;button.type='button';button.role='tab';button.textContent=name.slice(0,3);button.setAttribute('aria-label',name+' '+year);button.setAttribute('aria-selected',String(active));button.setAttribute('aria-controls','calendarPanel');button.tabIndex=active?0:-1;button.disabled=year<firstYear()||date>upcomingMonth();
+    button.className='month-tab';button.id='month-tab-'+index;button.type='button';button.role='tab';button.textContent=name.slice(0,3);button.setAttribute('aria-label',name+' '+year);button.setAttribute('aria-selected',String(active));button.setAttribute('aria-controls','calendarPanel');button.tabIndex=active?0:-1;button.disabled=year<FIRST_YEAR||date>upcomingMonth();
     button.onclick=()=>showMonth(year,index);
     button.onkeydown=event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();moveMonth(event.key==='ArrowRight'?1:-1,true)}};
     buttons.push(button);
@@ -97,7 +97,7 @@ function renderTabs(animate=false){
     });
   }
   $('calendarPanel').setAttribute('aria-labelledby','month-tab-'+viewMonth);
-  $('previousMonth').disabled=viewYear===firstYear()&&viewMonth===0;
+  $('previousMonth').disabled=viewYear===FIRST_YEAR&&viewMonth===0;
   const limit=upcomingMonth();
   $('nextMonth').disabled=viewYear===limit.getFullYear()&&viewMonth===limit.getMonth();
 }
@@ -119,7 +119,7 @@ function renderProgress(){
     button.setAttribute('aria-pressed',String(isSelected));
     const count=(practiceGoal(record,key,state)?1:0)+(videoGoal(record)?1:0);
     button.setAttribute('aria-label',`${longDate(key)}${key===today?', today':''}: ${count} of 2 goals${key>today?', upcoming':''}`);button.title=button.getAttribute('aria-label');button.dataset.date=key;button.onclick=()=>selectDay(key);
-    button.onkeydown=event=>{const amount={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[event.key];if(!amount)return;event.preventDefault();const date=parseDate(key);date.setDate(date.getDate()+amount);const next=dateKey(date);if(next>today||date.getFullYear()<firstYear())return;selectDay(next);requestAnimationFrame(()=>document.querySelector(`[data-date="${next}"]`)?.focus())};grid.append(button);
+    button.onkeydown=event=>{const amount={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[event.key];if(!amount)return;event.preventDefault();const date=parseDate(key);date.setDate(date.getDate()+amount);const next=dateKey(date);if(next>today||date.getFullYear()<FIRST_YEAR)return;selectDay(next);requestAnimationFrame(()=>document.querySelector(`[data-date="${next}"]`)?.focus())};grid.append(button);
   }
 }
 function renderDailyStatus(){
@@ -158,7 +158,7 @@ function selectDay(key){
 }
 function showMonth(year,month){
   const target=new Date(year,month,1,12);year=target.getFullYear();month=target.getMonth();
-  if(year<firstYear()||target>upcomingMonth())return;
+  if(year<FIRST_YEAR||target>upcomingMonth())return;
   const distance=(year-viewYear)*12+month-viewMonth;
   viewYear=year;viewMonth=month;
   const preferred=Number(selected.slice(8)),maxDay=year===Number(today.slice(0,4))&&month===Number(today.slice(5,7))-1?Number(today.slice(8)):new Date(year,month+1,0).getDate();

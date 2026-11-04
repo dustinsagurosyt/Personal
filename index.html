@@ -9,11 +9,19 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=34">
+  <link rel="stylesheet" href="style.css?v=36">
 </head>
 <body>
 <main>
-  <header class="app-header"><a class="brand" href="./" aria-label="Attention Reset home"><span class="brand-mark" aria-hidden="true">◉</span> Attention Reset</a><button id="today" class="text-button">Today <span aria-hidden="true">↗</span></button></header>
+  <header class="app-header">
+    <a class="brand" href="./" aria-label="Attention Reset home"><span class="brand-mark" aria-hidden="true">◉</span> Attention Reset</a>
+    <div class="header-actions">
+      <button id="today" class="text-button">Today <span aria-hidden="true">↗</span></button>
+      <div class="pebble-balance" title="Earn 1 pebble at 3 consecutive days, 2 more at 5, and 3 more at 7">
+        <span id="pebbleBalance">0</span> <span>Pebbles</span>
+      </div>
+    </div>
+  </header>
 
   <div id="homeView">
   <section class="progress" aria-label="Monthly progress">
@@ -23,7 +31,6 @@
     <div class="stat-line"><div class="stats" aria-label="Statistics for this month">
       <div class="stat" title="Consecutive completed days through today or yesterday"><span class="stat-value"><span id="currentStreak">0</span></span><span class="stat-label">Current streak</span></div>
       <div class="stat" title="Days with both daily goals completed"><span class="stat-value"><span id="completedDays">0</span></span><span class="stat-label">Days done</span></div>
-      <div class="stat" title="Earn 1 pebble at 3 consecutive days, 2 more at 5, and 3 more at 7"><span class="stat-value"><span id="pebbleBalance">0</span></span><span class="stat-label">Pebbles</span></div>
     </div></div>
   </section>
 

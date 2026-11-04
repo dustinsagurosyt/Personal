@@ -140,3 +140,24 @@ test('natural stages use completed days and unlock all 18 species in order',()=>
   h.run('drawPlots(271)');
   assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-1"/);
 });
+
+test('the selected month moves through the four visible slots before the strip shifts',()=>{
+  const h=harness();
+  const labels=()=>h.el('monthTabs').children.map(tab=>tab.textContent);
+  const active=()=>h.el('monthTabs').children.findIndex(tab=>tab.getAttribute('aria-selected')==='true');
+  assert.deepEqual(labels(),['Sep','Oct','Nov','Dec']);
+  assert.equal(active(),2);
+  h.el('nextMonth').onclick();
+  assert.equal(active(),3);
+  h.el('previousMonth').onclick();
+  h.el('previousMonth').onclick();
+  assert.equal(active(),1);
+  assert.deepEqual(labels(),['Sep','Oct','Nov','Dec']);
+  h.el('previousMonth').onclick();
+  assert.equal(active(),0);
+  h.el('previousMonth').onclick();
+  assert.deepEqual(labels(),['Aug','Sep','Oct','Nov']);
+  assert.equal(active(),0);
+  h.el('nextMonth').onclick();
+  assert.equal(active(),1);
+});

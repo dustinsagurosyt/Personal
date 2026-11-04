@@ -60,11 +60,15 @@ function renderTabs(animate=false){
   if(animate&&motionAllowed()){
     for(const [key,button] of existing)positions.set(key,button.getBoundingClientRect().left);
   }
-  const current=parseDate(today), viewing=new Date(viewYear,viewMonth,1,12);
-  const anchor=dateKey(viewing)>today?current:viewing;
+  const current=parseDate(today);
+  const firstVisible=tabs.children[0]?.dataset.month;
+  const previousStart=firstVisible?parseDate(firstVisible):current;
+  const selectedMonth=viewYear*12+viewMonth;
+  const previousMonth=previousStart.getFullYear()*12+previousStart.getMonth();
+  const start=Math.min(selectedMonth,Math.max(previousMonth-(firstVisible?0:2),selectedMonth-3));
   const buttons=[];
-  for(let step=-2;step<=1;step++){
-    const date=new Date(anchor.getFullYear(),anchor.getMonth()+step,1,12);
+  for(let step=0;step<4;step++){
+    const date=new Date(Math.floor(start/12),start%12+step,1,12);
     const year=date.getFullYear(),index=date.getMonth(),name=MONTHS[index],active=year===viewYear&&index===viewMonth;
     const key=dateKey(date);
     const button=existing.get(key)||document.createElement('button');

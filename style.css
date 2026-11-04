@@ -50,6 +50,7 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
   .app-dock button[aria-pressed=true]{background:transparent}
 }
 @media(prefers-reduced-motion:reduce){
+  .app-dock::before{transition:none}
   .app-dock button:active svg{transform:none}
 }
 .garden-header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin:24px 0 16px}

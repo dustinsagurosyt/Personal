@@ -132,7 +132,7 @@ function renderDailyStatus(){
   $('openJournal').textContent=timer.date===selected&&timer.deadline?'Continue ↗':record.gratitudeText?.trim()?'Read ↗':'Write ↗';
   $('dailyStatus').textContent=count===2?'Both goals met ✓':`${count} of 2`;$('dailyStatus').classList.toggle('done',count===2);$('videoMark').classList.toggle('done',video);
   const raw=record.minutes;let message='',tone='';
-  if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n<60){message='Under 60 minutes. Your video goal is met.';tone='success'}else{message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
+  if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n>=60){message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
   $('videoFeedback').hidden=!message;
   $('videoFeedback').textContent=message;$('videoFeedback').className='feedback'+(tone?' '+tone:'');
 }

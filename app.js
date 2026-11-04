@@ -219,7 +219,12 @@ surface.addEventListener('pointerup',event=>{if(!swipe)return;const dx=event.cli
 function remainingSeconds(){return timer.deadline?Math.max(0,Math.ceil((timer.deadline-Date.now())/1000)):timer.remaining}
 function aligned(){return timer.date===journalDate&&timer.mode===dialogMode}
 function duration(){return dialogMode==='restart'?120:GRATITUDE_SECONDS}
-function journalSaveStatus(){ $('journalSaved').textContent=storageError||'Saved on this device.';$('journalSaved').classList.toggle('error',!!storageError) }
+function journalSaveStatus(){
+  const status=$('journalSaved');
+  status.textContent=storageError;
+  status.hidden=!storageError;
+  status.classList.toggle('error',!!storageError);
+}
 function openJournal(key=selected,autostart=false,mode='gratitude'){
   journalDate=key;dialogMode=mode;
   $('journalDate').textContent=longDate(key);$('gratitudeText').value=recordFor(state,key).gratitudeText||'';
@@ -264,7 +269,7 @@ $('gratitudeText').oninput=()=>{
 $('startTimer').onclick=startOrPause;
 $('resetTimer').onclick=()=>{
   if(!aligned()&&timer.deadline)return;
-  timer={date:journalDate,mode:dialogMode,remaining:duration(),deadline:0,finished:false,started:false};saveTimer();$('timerNote').textContent='Timer reset. Your writing is kept.';renderTimer();
+  timer={date:journalDate,mode:dialogMode,remaining:duration(),deadline:0,finished:false,started:false};$('timerNote').textContent='';saveTimer();renderTimer();
 };
 $('activeSession').onclick=()=>openJournal(timer.date,false,timer.mode);
 $('finishJournal').onclick=()=>{

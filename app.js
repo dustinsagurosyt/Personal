@@ -1,4 +1,5 @@
 import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart, rewardProgress } from './model.mjs?v=14';
+import { gardenSpecies } from './plants.mjs?v=15';
 
 const $=id=>document.getElementById(id);
 const GRATITUDE_SECONDS=60;
@@ -278,69 +279,87 @@ $('export').onclick=()=>{
   const url=URL.createObjectURL(new Blob([record],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='attention-reset-'+today+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
 
+const DAYS_PER_PLANT=15;
 let capsuleIndex;
-function drawGarden(leaves) {
-  const plantLeaves = leaves ? (leaves - 1) % 15 + 1 : 0;
-  const branches = [
-    {y:72, angle:-155},
-    {y:55, angle:-25},
-    {y:38, angle:-155},
-  ];
-  let drawing='<path d="M39 83h42l-5 15H44Z" fill="#e1e6d8"/><path d="M37 83h46" stroke="#9da98f" stroke-width="3" stroke-linecap="round"/>';
-  if(plantLeaves){
-    const top=branches[Math.floor((plantLeaves-1)/5)].y-5;
-    drawing+=`<path d="M60 82Q58 70 60 ${top}" fill="none" stroke="#63866a" stroke-width="2.5" stroke-linecap="round"/>`;
-  }else{
-    drawing+='<ellipse cx="60" cy="78" rx="5" ry="3" fill="#a0ab91"/>';
-  }
-  branches.forEach(({y,angle},index)=>{
-    const count=Math.min(5,plantLeaves-index*5);
-    if(count<=0)return;
-    const length=count*6+5;
-    drawing+=`<g transform="translate(60 ${y}) rotate(${angle})"><path d="M0 0h${length}" stroke="#63866a" stroke-width="2" stroke-linecap="round"/>`;
-    for(let leaf=0;leaf<count;leaf++){
-      const x=7+leaf*6,side=leaf%2===0?-1:1;
-      drawing+=`<ellipse cx="${x}" cy="${side*4}" rx="6" ry="3" transform="rotate(${side*35} ${x} ${side*4})" fill="${leaf%2===0?'#4e965e':'#76ac74'}"/>`;
-    }
-    drawing+='</g>';
-  });
-  $('gardenPlant').innerHTML=drawing;
+let gardenLeaves;
+let stoneCount;
+
+function showView(garden){
+  $('homeView').hidden=garden;
+  $('gardenView').hidden=!garden;
+  $('today').hidden=garden;
+  $('homeTab').setAttribute('aria-pressed',String(!garden));
+  $('gardenTab').setAttribute('aria-pressed',String(garden));
+  window.scrollTo(0,0);
 }
+$('homeTab').onclick=()=>showView(false);
+$('gardenTab').onclick=()=>showView(true);
+
+function drawPlots(leaves){
+  if(gardenLeaves===leaves)return;
+  gardenLeaves=leaves;
+  const count=Math.ceil(leaves/DAYS_PER_PLANT);
+  const plots=[];
+  for(let index=0;index<count;index++){
+    const species=gardenSpecies[index%gardenSpecies.length];
+    const growth=Math.min(DAYS_PER_PLANT,leaves-index*DAYS_PER_PLANT);
+    const full=growth===DAYS_PER_PLANT;
+    const scale=.24+.76*growth/DAYS_PER_PLANT;
+    const label=full?`Day ${(index+1)*DAYS_PER_PLANT} · Fully grown`:`${growth}/${DAYS_PER_PLANT} days grown`;
+    plots.push(`<article class="garden-plot" style="--plot-color:${species.color}"><svg viewBox="0 0 120 106" aria-hidden="true"><g transform="translate(60 79) scale(${scale}) translate(-60 -79)">${species.foliage}</g>${species.pot}</svg><strong>${species.name}</strong><p>${label}</p></article>`);
+  }
+  $('gardenPlots').innerHTML=plots.join('');
+  $('nextPlot').hidden=leaves%DAYS_PER_PLANT!==0;
+  $('nextPlotTitle').textContent=`Plot ${count+1}`;
+}
+
 function renderRewards(){
   const {leaves,branches,entries,capsules}=rewardProgress(state,today);
-  drawGarden(leaves);
+  drawPlots(leaves);
+  $('gardenDays').textContent=`${leaves} completed ${leaves===1?'day':'days'}`;
+  const grown=Math.floor(leaves/DAYS_PER_PLANT);
+  $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;
   $('gardenCount').textContent=`${leaves} ${leaves===1?'leaf':'leaves'} · ${branches} ${branches===1?'branch':'branches'}`;
-  const plants=Math.ceil(leaves/15);
-  $('gardenPlants').hidden=plants<2;
-  $('gardenPlants').textContent=`${plants} plants`;
   const unlocked=capsules.length;
   const remainder=entries%5;
-  $('capsuleProgress').textContent=unlocked?`${unlocked} unlocked · ${remainder}/5 to next`:`${entries}/5 entries`;
-  $('openCapsule').hidden=!unlocked;
-  if(!unlocked)$('capsuleReveal').hidden=true;
-  $('openCapsule').setAttribute('aria-expanded',String(!$('capsuleReveal').hidden));
-  if($('capsuleReveal').hidden)return;
-  const index=Math.min(capsuleIndex??unlocked-1,unlocked-1);
-  const key=capsules[index];
+  $('capsuleProgress').textContent=unlocked?`${unlocked} unlocked · ${remainder}/5 entries to next`:`${entries}/5 entries to unlock a stone`;
+  const stones=$('stones');
+  if(stoneCount!==unlocked){
+    stoneCount=unlocked;
+    stones.replaceChildren();
+    for(let index=0;index<unlocked;index++){
+      const button=document.createElement('button');
+      button.type='button';
+      button.textContent=index+1;
+      button.setAttribute('aria-label',`Gratitude stone ${index+1}`);
+      button.setAttribute('aria-controls','capsuleReveal');
+      button.onclick=()=>{
+        capsuleIndex=index;
+        renderRewards();
+        $('closeCapsule').focus();
+      };
+      stones.append(button);
+    }
+  }
+  if(capsuleIndex!==undefined&&capsuleIndex>=unlocked)capsuleIndex=undefined;
+  Array.from(stones.children).forEach((button,index)=>button.setAttribute('aria-pressed',String(index===capsuleIndex)));
+  $('capsuleReveal').hidden=capsuleIndex===undefined;
+  if(capsuleIndex===undefined)return;
+  const key=capsules[capsuleIndex];
   const line=recordFor(state,key).gratitudeText.split(/\r?\n/).find(text=>text.trim()).trim();
   $('capsuleDate').textContent=longDate(key);
   $('capsuleQuote').textContent=line.length>180?line.slice(0,177).trimEnd()+'…':line;
-  $('capsulePosition').textContent=`${index+1} of ${unlocked}`;
+  $('capsulePosition').textContent=`Stone ${capsuleIndex+1} of ${unlocked}`;
   $('capsuleNavigation').hidden=unlocked<2;
-  $('olderCapsule').disabled=index===0;
-  $('newerCapsule').disabled=index===unlocked-1;
-  capsuleIndex=index;
+  $('olderCapsule').disabled=capsuleIndex===0;
+  $('newerCapsule').disabled=capsuleIndex===unlocked-1;
 }
-$('openCapsule').onclick=()=>{
-  capsuleIndex=undefined;
-  $('capsuleReveal').hidden=false;
-  renderRewards();
-  $('closeCapsule').focus();
-};
 $('closeCapsule').onclick=()=>{
-  $('capsuleReveal').hidden=true;
+  const button=$('stones').children[capsuleIndex];
+  capsuleIndex=undefined;
+  $('capsuleQuote').textContent='';
   renderRewards();
-  $('openCapsule').focus();
+  button?.focus();
 };
 $('olderCapsule').onclick=()=>{capsuleIndex--;renderRewards()};
 $('newerCapsule').onclick=()=>{capsuleIndex++;renderRewards()};

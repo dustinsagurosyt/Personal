@@ -121,3 +121,20 @@ test('90 completed days show all six species, the next plot, and 18 stones on th
   assert.equal(h.el('gardenView').hidden,true);
   assert.equal(h.el('homeView').hidden,false);
 });
+
+test('natural stages use completed days and unlock all 18 species in order',()=>{
+  const h=harness();
+  h.run('drawPlots(1)');
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-1"/);
+  h.run('drawPlots(4)');
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-4"/);
+  h.run('drawPlots(91)');
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/little-tree\.svg#day-15"/);
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/tulip\.svg#day-1"/);
+  h.run('drawPlots(270)');
+  assert.equal((h.el('gardenPlots').innerHTML.match(/#day-15"/g)||[]).length,18);
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/pumpkin-vine\.svg#day-15"/);
+  assert.equal(h.el('nextPlotTitle').textContent,'Plot 19');
+  h.run('drawPlots(271)');
+  assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-1"/);
+});

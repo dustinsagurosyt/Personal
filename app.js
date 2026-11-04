@@ -1,5 +1,5 @@
 import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart, rewardProgress } from './model.mjs?v=14';
-import { gardenSpecies } from './plants.mjs?v=15';
+import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);
 const GRATITUDE_SECONDS=60;
@@ -304,9 +304,8 @@ function drawPlots(leaves){
     const species=gardenSpecies[index%gardenSpecies.length];
     const growth=Math.min(DAYS_PER_PLANT,leaves-index*DAYS_PER_PLANT);
     const full=growth===DAYS_PER_PLANT;
-    const scale=.24+.76*growth/DAYS_PER_PLANT;
     const label=full?`Day ${(index+1)*DAYS_PER_PLANT} · Fully grown`:`${growth}/${DAYS_PER_PLANT} days grown`;
-    plots.push(`<article class="garden-plot" style="--plot-color:${species.color}"><svg viewBox="0 0 120 106" aria-hidden="true"><g transform="translate(60 79) scale(${scale}) translate(-60 -79)">${species.foliage}</g>${species.pot}</svg><strong>${species.name}</strong><p>${label}</p></article>`);
+    plots.push(`<article class="garden-plot" style="--plot-color:${species.color}"><img src="${species.asset}#day-${growth}" width="120" height="106" alt="" loading="lazy" decoding="async"><strong>${species.name}</strong><p>${label}</p></article>`);
   }
   $('gardenPlots').innerHTML=plots.join('');
   $('nextPlot').hidden=leaves%DAYS_PER_PLANT!==0;

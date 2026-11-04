@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {complete,practiceGoal,videoGoal,monthDates,monthStats,normalizeState,updateRecord,recordFor} from '../model.mjs';
+import {rewardProgress,complete,practiceGoal,videoGoal,monthDates,monthStats,normalizeState,updateRecord,recordFor} from '../model.mjs';
 test('gratitude needs writing and completion; video limit stays strictly under 60',()=>{
   for(const value of ['',null,undefined,' ',NaN,false,true,{},-1,60,'60',61,1441])assert.equal(complete({gratitudeDone:true,gratitudeText:'A warm meal',minutes:value}),false,String(value));
   for(const value of [0,'0',20,59,59.5])assert.equal(complete({gratitudeDone:true,gratitudeText:'A warm meal',minutes:value}),true,String(value));
@@ -18,4 +18,12 @@ test('prior focus achievements survive, but today needs the new gratitude goal',
 test('monthly statistics combine truthful legacy history and new gratitude days',()=>{
   const state={start:'2026-10-30',gratitudeSince:'2026-11-01',days:{'2026-10-30':{focus:true,minutes:20},'2026-10-31':{focus:true,minutes:59},'2026-11-01':{gratitudeDone:true,gratitudeText:'My family',minutes:60},'2026-11-02':{gratitudeDone:true,gratitudeText:'A quiet morning',minutes:59}}};
   assert.deepEqual(monthStats(state,2026,9,'2026-11-03'),{count:2,best:2,total:2,rate:100});assert.deepEqual(monthStats(state,2026,10,'2026-11-03'),{count:1,best:1,total:3,rate:33.3});assert.deepEqual(monthStats(state,2026,11,'2026-11-03'),{count:0,best:0,total:0,rate:0});
+});
+
+test('rewards span months and group distinct completed entries into capsules',()=>{
+  const dates=['2026-10-20','2026-10-21','2026-10-22','2026-10-23','2026-10-24','2026-10-25','2026-10-26','2026-11-01','2026-11-02','2026-11-03'];
+  const days=Object.fromEntries(dates.map((key,index)=>[key,{gratitudeDone:true,gratitudeText:key,minutes:index<5?59:60}]));
+  days['2026-10-31']={gratitudeDone:false,gratitudeText:'Draft',minutes:5};
+  days['2026-11-04']={gratitudeDone:true,gratitudeText:'Future',minutes:5};
+  assert.deepEqual(rewardProgress({days},'2026-11-03'),{leaves:5,branches:1,entries:10,capsules:[dates[0],dates[5]]});
 });

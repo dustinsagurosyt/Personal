@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart } from './model.mjs?v=6';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart, rewardProgress } from './model.mjs?v=14';
 
 const $=id=>document.getElementById(id);
 const GRATITUDE_SECONDS=60;
@@ -97,6 +97,7 @@ function renderTabs(animate=false){
   $('nextMonth').disabled=viewYear===limit.getFullYear()&&viewMonth===limit.getMonth();
 }
 function renderProgress(){
+  renderRewards();
   const stats=monthStats(state,viewYear,viewMonth,today);
   $('monthTitle').textContent=MONTHS[viewMonth];$('bestStreak').textContent=stats.best;$('completedDays').textContent=stats.count;$('completionRate').textContent=stats.total?stats.rate+'%':'—';
 
@@ -276,6 +277,74 @@ $('export').onclick=()=>{
   let record=JSON.stringify(state,null,2);if(unreadable){try{record=localStorage.getItem(STORAGE_KEY)||record}catch{}}
   const url=URL.createObjectURL(new Blob([record],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='attention-reset-'+today+'.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 };
+
+let capsuleIndex;
+function drawGarden(leaves) {
+  const plantLeaves = leaves ? (leaves - 1) % 15 + 1 : 0;
+  const branches = [
+    {y:72, angle:-155},
+    {y:55, angle:-25},
+    {y:38, angle:-155},
+  ];
+  let drawing='<path d="M39 83h42l-5 15H44Z" fill="#e1e6d8"/><path d="M37 83h46" stroke="#9da98f" stroke-width="3" stroke-linecap="round"/>';
+  if(plantLeaves){
+    const top=branches[Math.floor((plantLeaves-1)/5)].y-5;
+    drawing+=`<path d="M60 82Q58 70 60 ${top}" fill="none" stroke="#63866a" stroke-width="2.5" stroke-linecap="round"/>`;
+  }else{
+    drawing+='<ellipse cx="60" cy="78" rx="5" ry="3" fill="#a0ab91"/>';
+  }
+  branches.forEach(({y,angle},index)=>{
+    const count=Math.min(5,plantLeaves-index*5);
+    if(count<=0)return;
+    const length=count*6+5;
+    drawing+=`<g transform="translate(60 ${y}) rotate(${angle})"><path d="M0 0h${length}" stroke="#63866a" stroke-width="2" stroke-linecap="round"/>`;
+    for(let leaf=0;leaf<count;leaf++){
+      const x=7+leaf*6,side=leaf%2===0?-1:1;
+      drawing+=`<ellipse cx="${x}" cy="${side*4}" rx="6" ry="3" transform="rotate(${side*35} ${x} ${side*4})" fill="${leaf%2===0?'#4e965e':'#76ac74'}"/>`;
+    }
+    drawing+='</g>';
+  });
+  $('gardenPlant').innerHTML=drawing;
+}
+function renderRewards(){
+  const {leaves,branches,entries,capsules}=rewardProgress(state,today);
+  drawGarden(leaves);
+  $('gardenCount').textContent=`${leaves} ${leaves===1?'leaf':'leaves'} · ${branches} ${branches===1?'branch':'branches'}`;
+  const plants=Math.ceil(leaves/15);
+  $('gardenPlants').hidden=plants<2;
+  $('gardenPlants').textContent=`${plants} plants`;
+  const unlocked=capsules.length;
+  const remainder=entries%5;
+  $('capsuleProgress').textContent=unlocked?`${unlocked} unlocked · ${remainder}/5 to next`:`${entries}/5 entries`;
+  $('openCapsule').hidden=!unlocked;
+  if(!unlocked)$('capsuleReveal').hidden=true;
+  $('openCapsule').setAttribute('aria-expanded',String(!$('capsuleReveal').hidden));
+  if($('capsuleReveal').hidden)return;
+  const index=Math.min(capsuleIndex??unlocked-1,unlocked-1);
+  const key=capsules[index];
+  const line=recordFor(state,key).gratitudeText.split(/\r?\n/).find(text=>text.trim()).trim();
+  $('capsuleDate').textContent=longDate(key);
+  $('capsuleQuote').textContent=line.length>180?line.slice(0,177).trimEnd()+'…':line;
+  $('capsulePosition').textContent=`${index+1} of ${unlocked}`;
+  $('capsuleNavigation').hidden=unlocked<2;
+  $('olderCapsule').disabled=index===0;
+  $('newerCapsule').disabled=index===unlocked-1;
+  capsuleIndex=index;
+}
+$('openCapsule').onclick=()=>{
+  capsuleIndex=undefined;
+  $('capsuleReveal').hidden=false;
+  renderRewards();
+  $('closeCapsule').focus();
+};
+$('closeCapsule').onclick=()=>{
+  $('capsuleReveal').hidden=true;
+  renderRewards();
+  $('openCapsule').focus();
+};
+$('olderCapsule').onclick=()=>{capsuleIndex--;renderRewards()};
+$('newerCapsule').onclick=()=>{capsuleIndex++;renderRewards()};
+
 function refreshToday(){const latest=dateKey();if(latest!==today){const followedToday=selected===today;today=latest;if(followedToday){const d=parseDate(today);selected=today;viewYear=d.getFullYear();viewMonth=d.getMonth()}renderYears();renderTabs();renderProgress();renderDay()}renderTimer()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&event.newValue){try{state=normalizeState(JSON.parse(event.newValue),today);renderYears();renderProgress();renderDay();if($('journalDialog').open){$('gratitudeText').value=recordFor(state,journalDate).gratitudeText||'';journalSaveStatus()}}catch{}}});

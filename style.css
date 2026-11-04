@@ -10,3 +10,17 @@
 .month-navigation{width:min(100%,296px);margin:8px 0 16px;gap:4px}.month-tabs{touch-action:pan-y}.month-tab{flex:1 0 auto;padding-inline:9px}.year-picker select{height:44px;min-width:74px;padding:0 25px 0 11px;border:2px solid #e0e4e5;border-radius:10px;background:#fff;color:#667074;font-size:13px}.year-picker>span:last-child{right:9px}@media(min-width:700px){.year-picker select{border-radius:12px}}@media(max-width:390px){.year-picker select{border-radius:8px}}
 
 .calendar-panel{position:relative;overflow:clip;overflow-clip-margin:4px}.calendar-outgoing{position:absolute;left:0;right:0;pointer-events:none}.month-tabs{overflow:hidden}.month-tab{flex:1 1 0;min-width:0}
+
+.rewards{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 16px}
+.reward-card,.capsule-reveal{border:1px solid #e5eae4;border-radius:12px;background:#fafbf9;padding:12px;min-width:0}
+.reward-card h2{font-size:13px;letter-spacing:0;margin:0}
+.reward-card p{margin:4px 0 0;font-size:11px;color:#65736a;line-height:1.4}
+.garden-card{display:flex;align-items:center;justify-content:space-between;gap:4px}
+.garden-card svg{width:clamp(44px,15vw,76px);height:auto;flex:none}
+.capsule-card{display:grid;grid-template-columns:auto 1fr;align-content:center;align-items:center;gap:4px 8px}
+.capsule-icon{color:#648169}
+.capsule-card button{grid-column:1/-1;justify-self:start;color:#326343;padding:0;font-size:12px;min-height:34px}
+.capsule-reveal{grid-column:1/-1}
+.capsule-heading,.capsule-navigation{display:flex;align-items:center;justify-content:space-between;color:#65736a;font-size:12px}
+.capsule-heading button,.capsule-navigation button{min-width:44px;font-size:22px}
+.capsule-reveal blockquote{margin:0 0 8px;font-size:14px;line-height:1.5;overflow-wrap:anywhere}

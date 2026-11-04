@@ -12,6 +12,7 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
     showModal(){this.open=true}close(){this.open=false}append(el){this.children.push(el)} insertBefore(el,before){const index=this.children.indexOf(el);if(index>=0)this.children.splice(index,1);this.children.splice(before?this.children.indexOf(before):this.children.length,0,el)} removeChild(el){this.children.splice(this.children.indexOf(el),1)}replaceChildren(){this.children=[]}setAttribute(k,v){this.attributes[k]=v}getAttribute(k){return this.attributes[k]}addEventListener(n,f){this.events[n]=f}scrollTo(){}scrollIntoView(){}focus(){}click(){this.onclick?.()}
   }
   for(const match of html.matchAll(/\bid="([^"]+)"/g))roots.set(match[1],new Element(match[1]));
+  roots.get('capsuleReveal').hidden=true;
   const find=(id)=>{if(roots.has(id))return roots.get(id);const visit=el=>{if(el.id===id)return el;for(const c of el.children){const r=visit(c);if(r)return r}};for(const root of roots.values()){const r=visit(root);if(r)return r}return null};
   const storage=new Map(Object.entries(initial));if(timer)storage.set('attention-reset-gratitude-timer-v1',JSON.stringify(timer));
   const intervals=[];const NativeDate=Date;class Clock extends NativeDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
@@ -67,4 +68,28 @@ test('previewing December from November 2 does not select a disabled date',()=>{
   h.el('previousMonth').onclick();
   const november2=h.el('calendar').children.find(day=>day.dataset.date==='2026-11-02');
   assert.equal(november2.getAttribute('aria-pressed'),'true');
+});
+
+test('the fifth completed entry unlocks a private capsule and a fifth goal day completes a branch',()=>{
+  const days=Object.fromEntries(Array.from({length:4},(_,index)=>[
+    `2026-10-${25+index}`,{gratitudeDone:true,gratitudeText:`Memory ${index+1}\nAnother line`,minutes:10}
+  ]));
+  const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-10-25',days})});
+  assert.equal(h.el('gardenCount').textContent,'4 leaves · 0 branches');
+  assert.equal(h.el('openCapsule').hidden,true);
+  h.el('openJournal').onclick();
+  h.el('gratitudeText').value='My fifth entry';
+  h.el('gratitudeText').oninput();
+  assert.equal(h.el('openCapsule').hidden,true);
+  h.el('finishJournal').onclick();
+  assert.equal(h.el('openCapsule').hidden,false);
+  assert.equal(h.el('capsuleReveal').hidden,true);
+  assert.equal(h.el('capsuleQuote').textContent,undefined);
+  h.el('openCapsule').onclick();
+  assert.equal(h.el('capsuleQuote').textContent,'Memory 1');
+  h.el('closeCapsule').onclick();
+  assert.equal(h.el('capsuleReveal').hidden,true);
+  h.el('minutes').value='20';
+  h.el('minutes').oninput();
+  assert.equal(h.el('gardenCount').textContent,'5 leaves · 1 branch');
 });

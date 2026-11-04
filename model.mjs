@@ -57,3 +57,21 @@ export function updateRecord(state,key,patch,today) {
   if (!parseDate(key) || key > today) throw new Error('Only today and past dates can be edited.');
   return {...state,start:state.start && state.start<key?state.start:key,days:{...state.days,[key]:{...recordFor(state,key),...patch}}};
 }
+
+export function rewardProgress(state, today) {
+  let leaves = 0;
+  const gratitudeDates = [];
+  for (const [key, record] of Object.entries(state.days)) {
+    if (key > today || !parseDate(key)) continue;
+    if (complete(record, key, state)) leaves++;
+    if (record?.gratitudeDone === true && typeof record.gratitudeText === 'string' && record.gratitudeText.trim()) {
+      gratitudeDates.push(key);
+    }
+  }
+  gratitudeDates.sort();
+  const capsules = [];
+  for (let index = 4; index < gratitudeDates.length; index += 5) {
+    capsules.push(gratitudeDates[index - 4]);
+  }
+  return {leaves, branches: Math.floor(leaves / 5), entries: gratitudeDates.length, capsules};
+}

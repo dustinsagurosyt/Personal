@@ -29,7 +29,12 @@ function saveState(){
   catch{storageError='Changes could not be saved. Download your record before leaving this page.'}
   renderSave();return !storageError;
 }
-function renderSave(){ $('saved').textContent=storageError||'Saved automatically on this device.';$('saved').classList.toggle('error',!!storageError) }
+function renderSave(){
+  const status=$('saved');
+  status.textContent=storageError;
+  status.hidden=!storageError;
+  status.classList.toggle('error',!!storageError);
+}
 function saveTimer(){try{localStorage.setItem(TIMER_KEY,JSON.stringify(timer))}catch{$('timerNote').textContent='This timer cannot be saved across reloads on this browser.'}}
 function setRecord(patch,key=selected){
   if(key>today)return;
@@ -113,8 +118,9 @@ function renderDailyStatus(){
   $('gratitudeLabel').textContent=legacy?'Previous focus session':'5-minute gratitude';
   $('openJournal').textContent=timer.date===selected&&timer.deadline?'Continue ↗':record.gratitudeText?.trim()?'Read ↗':'Write ↗';
   $('dailyStatus').textContent=count===2?'Both goals met ✓':`${count} of 2`;$('dailyStatus').classList.toggle('done',count===2);$('videoMark').classList.toggle('done',video);
-  const raw=record.minutes;let message='Enter your video minutes when you’re ready.',tone='';
+  const raw=record.minutes;let message='',tone='';
   if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n<60){message='Under 60 minutes. Your video goal is met.';tone='success'}else{message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
+  $('videoFeedback').hidden=!message;
   $('videoFeedback').textContent=message;$('videoFeedback').className='feedback'+(tone?' '+tone:'');
   $('restartFeedback').textContent=record.restarts?`${record.restarts} small restart${record.restarts===1?'':'s'} recorded for this day.`:'';
 }

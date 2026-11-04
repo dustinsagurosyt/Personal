@@ -32,12 +32,12 @@
     <p id="futureMessage" class="muted" hidden>You can log dates in this month once they arrive.</p>
     <div class="goal-row gratitude-row"><label class="goal-label" for="gratitudeDone"><input type="checkbox" id="gratitudeDone"><span><strong id="gratitudeLabel">5-minute gratitude</strong></span></label><button id="openJournal" class="write-button">Write <span aria-hidden="true">↗</span></button></div>
     <div class="goal-row video-row"><div class="goal-label"><span id="videoMark" class="goal-mark" aria-hidden="true"></span><label for="minutes"><strong>Short videos under 60 min</strong></label></div><div class="minute-entry"><input type="number" id="minutes" min="0" max="1440" step="1" placeholder="—" inputmode="numeric" aria-label="Short-form video minutes" aria-describedby="videoFeedback"><span>min</span></div></div>
-    <p id="videoFeedback" class="feedback" aria-live="polite">Enter your video minutes when you’re ready.</p>
-    <p id="saved" class="save-state" role="status" aria-live="polite">Saved on this device.</p>
+    <p id="videoFeedback" class="feedback" aria-live="polite" hidden></p>
+    <p id="saved" class="save-state" role="status" aria-live="polite" hidden></p>
   </section>
 
   <section class="restart"><div class="restart-icon" aria-hidden="true">↻</div><div><h3>A fresh start is always available.</h3><p>A missed day stays one day. Choose one small action and give it two minutes.</p><button id="restart" class="text-button">Take a 2-minute restart <span aria-hidden="true">↗</span></button><p id="restartFeedback" class="muted" aria-live="polite"></p></div></section>
-  <footer><button id="export" class="text-button">Download my record ↓</button><p>Your entries stay in this browser on this device. No notifications or extra account.</p></footer>
+  <footer><button id="export" class="text-button">Download my record ↓</button></footer>
 </main>
 <dialog id="journalDialog" class="journal-dialog" aria-labelledby="journalTitle">
   <div class="journal-shell">
@@ -50,6 +50,6 @@
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=9"></script>
+<script type="module" src="app.js?v=10"></script>
 </body>
 </html>

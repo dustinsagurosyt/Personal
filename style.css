@@ -23,7 +23,7 @@
 /* Keep the month strip compact and match the year control to the calendar. */
 .month-navigation{width:min(100%,296px);margin:8px 0 16px;gap:4px}.month-tabs{touch-action:pan-y}.month-tab{flex:1 0 auto;padding-inline:9px}.year-picker select{height:44px;min-width:74px;padding:0 25px 0 11px;border:2px solid var(--line);border-radius:10px;background:var(--surface);color:var(--muted);font-size:13px}.year-picker>span:last-child{right:9px}@media(min-width:700px){.year-picker select{border-radius:12px}}@media(max-width:390px){.year-picker select{border-radius:8px}}
 
-.calendar-panel{position:relative;overflow:clip;overflow-clip-margin:4px}.calendar-outgoing{position:absolute;left:0;right:0;pointer-events:none}.month-tabs{overflow:hidden}.month-tab{flex:1 1 0;min-width:0}
+.month-tabs{overflow:hidden}.month-tab{flex:1 1 0;min-width:0}
 
 
 main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}

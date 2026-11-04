@@ -80,17 +80,17 @@ function renderTabs(animate=false){
   buttons.forEach((button,index)=>{
     if(tabs.children[index]!==button)tabs.insertBefore(button,tabs.children[index]||null);
   });
-  if(animate&&motionAllowed()){
-    for(const button of buttons){
-      button.getAnimations?.().forEach(animation=>animation.cancel());
+  if(positions.size){
+    for(const button of buttons)button.getAnimations?.().forEach(animation=>animation.cancel());
+    const offsets=buttons.map(button=>{
       const previous=positions.get(button.dataset.month);
-      if(previous===undefined){
-        button.animate?.([{opacity:0},{opacity:1}],{duration:210,easing:'ease-out'});
-      }else{
-        const offset=previous-button.getBoundingClientRect().left;
-        if(offset)button.animate?.([{transform:`translateX(${offset}px)`},{transform:'translateX(0)'}],{duration:240,easing:'cubic-bezier(.2,.7,.3,1)'});
-      }
-    }
+      return previous===undefined?undefined:previous-button.getBoundingClientRect().left;
+    });
+    const enteringOffset=offsets.find(offset=>offset!==undefined);
+    buttons.forEach((button,index)=>{
+      const offset=offsets[index]??enteringOffset;
+      if(offset)button.animate?.([{transform:`translateX(${offset}px)`},{transform:'translateX(0)'}],{duration:180,easing:'ease-out'});
+    });
   }
   $('calendarPanel').setAttribute('aria-labelledby','month-tab-'+viewMonth);
   $('previousMonth').disabled=viewYear===firstYear()&&viewMonth===0;
@@ -140,62 +140,28 @@ function renderDay(){
 }
 function selectDay(key){
   const date=parseDate(key);if(!date||key>today)return;selected=key;
-  const direction=Math.sign((date.getFullYear()-viewYear)*12+date.getMonth()-viewMonth);
-  if(direction){
+  const distance=(date.getFullYear()-viewYear)*12+date.getMonth()-viewMonth;
+  if(distance){
     viewMonth=date.getMonth();
     viewYear=date.getFullYear();
     renderYears();
-    renderTabs(true);
-    animateMonthChange(direction,renderProgress);
+    renderTabs(Math.abs(distance)===1);
+    renderProgress();
   }else{
     renderProgress();
   }
   renderDay();
 }
-let calendarTransition;
-function animateMonthChange(direction,update){
-  calendarTransition?.();
-  const panel=$('calendarPanel'),grid=$('calendar');
-  if(!direction||!motionAllowed()||typeof grid.animate!=='function'){
-    update();
-    return;
-  }
-  const height=panel.getBoundingClientRect().height;
-  const previous=grid.cloneNode(true);
-  previous.removeAttribute('id');
-  previous.setAttribute('aria-hidden','true');
-  previous.inert=true;
-  previous.classList.add('calendar-outgoing');
-  previous.style.top=grid.offsetTop+'px';
-  update();
-  const nextHeight=panel.getBoundingClientRect().height;
-  panel.append(previous);
-  const options={duration:240,easing:'cubic-bezier(.2,.7,.3,1)'};
-  const animations=[
-    previous.animate([{transform:'translateX(0)',opacity:1},{transform:`translateX(${-direction*100}%)`,opacity:0}],options),
-    grid.animate([{transform:`translateX(${direction*100}%)`,opacity:0},{transform:'translateX(0)',opacity:1}],options),
-    panel.animate([{height:height+'px'},{height:nextHeight+'px'}],options)
-  ];
-  const cleanup=()=>{
-    previous.remove();
-    animations.forEach(animation=>animation.cancel());
-    if(calendarTransition===cleanup)calendarTransition=undefined;
-  };
-  calendarTransition=cleanup;
-  Promise.allSettled(animations.map(animation=>animation.finished)).then(()=>{
-    if(calendarTransition===cleanup)cleanup();
-  });
-}
 function showMonth(year,month){
   const target=new Date(year,month,1,12);year=target.getFullYear();month=target.getMonth();
   if(year<firstYear()||target>upcomingMonth())return;
-  const direction=Math.sign((year-viewYear)*12+month-viewMonth);
+  const distance=(year-viewYear)*12+month-viewMonth;
   viewYear=year;viewMonth=month;
   const preferred=Number(selected.slice(8)),maxDay=year===Number(today.slice(0,4))&&month===Number(today.slice(5,7))-1?Number(today.slice(8)):new Date(year,month+1,0).getDate();
   selected=dateKey(new Date(year,month,Math.min(preferred,maxDay),12));
   renderYears();
-  renderTabs(Boolean(direction));
-  animateMonthChange(direction,renderProgress);
+  renderTabs(Math.abs(distance)===1);
+  renderProgress();
   renderDay();
 }
 function moveMonth(amount,focusTab=false){showMonth(viewYear,viewMonth+amount);if(focusTab)requestAnimationFrame(()=>$('month-tab-'+viewMonth)?.focus())}

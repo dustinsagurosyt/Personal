@@ -283,6 +283,14 @@ const DAYS_PER_PLANT=15;
 let capsuleIndex;
 let gardenLeaves;
 let stoneCount;
+const stoneShapes = [
+  "M5 29C4 20 14 13 26 12C39 10 54 14 59 22C64 32 53 39 38 41C24 43 7 40 5 29Z",
+  "M12 37C5 32 9 22 18 14C24 8 32 6 40 10C50 16 57 28 54 36C51 44 19 45 12 37Z",
+  "M10 22C15 14 26 11 38 12C51 13 59 20 58 30C56 41 43 43 28 41C15 40 4 34 10 22Z",
+  "M9 31C7 22 17 20 25 15C35 8 45 9 53 14C60 19 57 32 49 38C39 46 14 44 9 31Z",
+  "M10 26C11 17 19 10 29 10C39 10 47 13 53 21C58 28 55 37 46 41C35 46 23 43 15 38C10 35 8 31 10 26Z",
+  "M6 31C6 24 13 19 24 17C34 16 43 13 51 16C58 19 61 24 58 31C53 40 42 42 28 42C15 42 6 39 6 31Z"
+];
 
 function showView(garden){
   $('homeView').hidden=garden;
@@ -329,7 +337,8 @@ function renderRewards(){
     for(let index=0;index<unlocked;index++){
       const button=document.createElement('button');
       button.type='button';
-      button.textContent=index+1;
+      const shape=stoneShapes[index%stoneShapes.length];
+      button.innerHTML=`<svg viewBox="0 0 64 50" aria-hidden="true"><path d="${shape}"/></svg><span>${index+1}</span>`;
       button.setAttribute('aria-label',`Gratitude stone ${index+1}`);
       button.setAttribute('aria-controls','capsuleReveal');
       button.onclick=()=>{

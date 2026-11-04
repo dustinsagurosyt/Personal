@@ -45,11 +45,15 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .next-plot strong{font-size:13px}
 .gratitude-stones{margin-top:22px}
 .gratitude-stones h2{color:var(--ink);font-size:20px;margin:0}
-.stone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;margin-top:10px}
-.stone-grid button{border:1px solid #dbe3d5;background:#e7eddf;border-radius:15px 12px 16px 13px;color:#36563c;min-height:44px;font-size:13px;font-weight:600}
-.stone-grid button:nth-child(3n+2){background:#eef0e6}
-.stone-grid button:nth-child(3n){background:#ece9df}
-.stone-grid button[aria-pressed=true]{background:#547458;color:var(--surface);border-color:#36563c}
+.stone-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px;margin-top:10px}
+.stone-grid button{--pebble:#e4e6dc;display:grid;place-items:center;min-width:0;min-height:48px;padding:0;color:var(--ink);font-size:13px;font-weight:500}
+.stone-grid button:nth-child(3n+2){--pebble:#e9e4da}
+.stone-grid button:nth-child(3n){--pebble:#e2e7df}
+.stone-grid button svg,.stone-grid button span{grid-area:1/1}
+.stone-grid button svg{width:100%;max-width:66px;height:auto;fill:var(--pebble)}
+.stone-grid button span{z-index:1}
+.stone-grid button[aria-pressed=true]{--pebble:#dce6d8}
+.stone-grid button[aria-pressed=true] path{stroke:#658065;stroke-width:1.5}
 .capsule-reveal{margin-top:12px;padding:12px;border:1px solid #dde8d7;border-radius:14px;background:var(--soft);color:var(--ink)}
 .capsule-heading,.capsule-navigation{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#45634b;font-size:12px}
 .capsule-heading button{min-width:44px;font-size:22px}

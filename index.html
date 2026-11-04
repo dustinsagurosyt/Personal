@@ -38,7 +38,7 @@
   <section id="dailyPanel" class="daily-panel" aria-labelledby="dayTitle">
     <div class="daily-heading"><div><h2 id="dayTitle">Today</h2></div><span id="dailyStatus" class="daily-status">0 of 2</span></div>
     <p id="futureMessage" class="muted" hidden>You can log dates in this month once they arrive.</p>
-    <div class="goal-row gratitude-row"><label class="goal-label" for="gratitudeDone"><input type="checkbox" id="gratitudeDone"><span><strong id="gratitudeLabel">5-minute gratitude</strong></span></label><button id="openJournal" class="write-button">Write <span aria-hidden="true">↗</span></button></div>
+    <div class="goal-row gratitude-row"><label class="goal-label" for="gratitudeDone"><input type="checkbox" id="gratitudeDone"><span><strong id="gratitudeLabel">1-minute gratitude</strong></span></label><button id="openJournal" class="write-button">Write <span aria-hidden="true">↗</span></button></div>
     <div class="goal-row video-row"><div class="goal-label"><span id="videoMark" class="goal-mark" aria-hidden="true"></span><label for="minutes"><strong>Short videos under 60 min</strong></label></div><div class="minute-entry"><input type="number" id="minutes" min="0" max="1440" step="1" placeholder="—" inputmode="numeric" aria-label="Short-form video minutes" aria-describedby="videoFeedback"><span>min</span></div></div>
     <p id="videoFeedback" class="feedback" aria-live="polite" hidden></p>
     <p id="saved" class="save-state" role="status" aria-live="polite" hidden></p>
@@ -51,13 +51,13 @@
   <div class="journal-shell">
     <div class="journal-top"><span id="journalDate" class="journal-date"></span><span class="session-badge"><i aria-hidden="true"></i><span id="sessionBadge">Gratitude</span></span><button id="closeJournal" class="close-journal" aria-label="Close journal">×</button></div>
     <h2 id="journalTitle">What am I grateful for?</h2>
-    <div id="timerFace" class="timer-face"><span id="sessionIcon" class="session-icon" aria-hidden="true">🌿</span><div id="clock" class="journal-clock" role="timer" aria-label="Gratitude timer">05:00</div><span id="timerDuration" class="timer-duration">5 min</span><span class="timer-dash" aria-hidden="true"></span></div>
+    <div id="timerFace" class="timer-face"><span id="sessionIcon" class="session-icon" aria-hidden="true">🌿</span><div id="clock" class="journal-clock" role="timer" aria-label="Gratitude timer">01:00</div><span id="timerDuration" class="timer-duration">1 min</span><span class="timer-dash" aria-hidden="true"></span></div>
     <div id="writingPanel" class="writing-panel"><label class="sr-only" for="gratitudeText">What are you grateful for on this day?</label><textarea id="gratitudeText" rows="5" maxlength="10000" placeholder="Today, I’m grateful for…"></textarea><p id="journalSaved" class="journal-saved" role="status">Saved on this device.</p></div>
     <div class="journal-controls"><button id="startTimer" class="session-control" aria-label="Start timer"><span id="pauseIcon" aria-hidden="true">▶</span></button><button id="finishJournal" class="finish-journal" aria-label="Finish gratitude entry"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="m11 25 9 9 19-21"/></svg></button><button id="resetTimer" class="session-control" aria-label="Reset timer"><span aria-hidden="true">↻</span></button></div>
     <p id="timerNote" class="timer-note" role="status" aria-live="polite"></p><button id="activeSession" class="text-button active-session" hidden>Return to active session</button>
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=10"></script>
+<script type="module" src="app.js?v=11"></script>
 </body>
 </html>

@@ -1,6 +1,7 @@
 import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, trackingStart } from './model.mjs?v=6';
 
 const $=id=>document.getElementById(id);
+const GRATITUDE_SECONDS=60;
 const TIMER_KEY='attention-reset-gratitude-timer-v1';
 let today=dateKey(),selected=today,viewYear=new Date().getFullYear(),viewMonth=new Date().getMonth();
 let storageError='',unreadable=false,state;
@@ -13,10 +14,16 @@ try {
   unreadable=true;
 }
 let journalDate=today,dialogMode='gratitude';
-let timer={date:today,mode:'gratitude',remaining:300,deadline:0,finished:false,started:false};
+let timer={date:today,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};
 try {
   const saved=JSON.parse(localStorage.getItem(TIMER_KEY));
-  if(saved && parseDate(saved.date) && saved.date<=today && ['gratitude','restart'].includes(saved.mode) && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=(saved.mode==='restart'?120:300) && Number.isFinite(saved.deadline) && saved.deadline>=0)timer=saved;
+  if(saved && parseDate(saved.date) && saved.date<=today && ['gratitude','restart'].includes(saved.mode) && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=(saved.mode==='restart'?120:300) && Number.isFinite(saved.deadline) && saved.deadline>=0){
+    timer=saved;
+    if(timer.mode==='gratitude'){
+      timer.remaining=Math.min(timer.remaining,GRATITUDE_SECONDS);
+      if(timer.deadline)timer.deadline=Math.min(timer.deadline,Date.now()+GRATITUDE_SECONDS*1000);
+    }
+  }
 } catch {}
 const upcomingMonth=()=>{const d=parseDate(today);return new Date(d.getFullYear(),d.getMonth()+1,1,12)};
 const firstYear=()=>Math.max(1900,Math.min(Number(trackingStart(state,today).slice(0,4)),Number(today.slice(0,4))-4));
@@ -115,7 +122,7 @@ function renderDailyStatus(){
   const record=currentRecord(),video=videoGoal(record),practice=practiceGoal(record,selected,state),count=(practice?1:0)+(video?1:0);
   $('gratitudeDone').checked=practice;
   const legacy=selected<state.gratitudeSince && typeof record.gratitudeDone!=='boolean' && typeof record.focus==='boolean';
-  $('gratitudeLabel').textContent=legacy?'Previous focus session':'5-minute gratitude';
+  $('gratitudeLabel').textContent=legacy?'Previous focus session':'1-minute gratitude';
   $('openJournal').textContent=timer.date===selected&&timer.deadline?'Continue ↗':record.gratitudeText?.trim()?'Read ↗':'Write ↗';
   $('dailyStatus').textContent=count===2?'Both goals met ✓':`${count} of 2`;$('dailyStatus').classList.toggle('done',count===2);$('videoMark').classList.toggle('done',video);
   const raw=record.minutes;let message='',tone='';
@@ -211,7 +218,7 @@ surface.addEventListener('pointerup',event=>{if(!swipe)return;const dx=event.cli
 }
 function remainingSeconds(){return timer.deadline?Math.max(0,Math.ceil((timer.deadline-Date.now())/1000)):timer.remaining}
 function aligned(){return timer.date===journalDate&&timer.mode===dialogMode}
-function duration(){return dialogMode==='restart'?120:300}
+function duration(){return dialogMode==='restart'?120:GRATITUDE_SECONDS}
 function journalSaveStatus(){ $('journalSaved').textContent=storageError||'Saved on this device.';$('journalSaved').classList.toggle('error',!!storageError) }
 function openJournal(key=selected,autostart=false,mode='gratitude'){
   journalDate=key;dialogMode=mode;
@@ -220,19 +227,19 @@ function openJournal(key=selected,autostart=false,mode='gratitude'){
   $('finishJournal').setAttribute('aria-label',mode==='restart'?'Finish restart':'Save and complete gratitude entry');
   $('timerNote').textContent='';journalSaveStatus();
   if(!$('journalDialog').open)$('journalDialog').showModal();
-  if(autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode,remaining:mode==='restart'?120:300,deadline:0,finished:false,started:false};startOrPause()}
+  if(autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode,remaining:mode==='restart'?120:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};startOrPause()}
   renderTimer();
 }
 function renderTimer(){
   let seconds=remainingSeconds();
-  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(aligned())$('timerNote').textContent=timer.mode==='gratitude'?'Five minutes are up. Tap the checkmark when your entry is ready.':'Two minutes done. You’ve made a start.'}
+  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(aligned())$('timerNote').textContent=timer.mode==='gratitude'?'One minute is up. Tap the checkmark when your entry is ready.':'Two minutes done. You’ve made a start.'}
   if(!aligned())seconds=duration();
   $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
   $('clock').setAttribute('aria-label',(dialogMode==='restart'?'Restart':'Gratitude')+' timer');
   const running=aligned()&&!!timer.deadline,otherRunning=!aligned()&&!!timer.deadline;
   $('pauseIcon').textContent=running?'Ⅱ':'▶';$('startTimer').setAttribute('aria-label',running?'Pause timer':aligned()&&timer.started&&!timer.finished?'Resume timer':'Start timer');
   $('startTimer').disabled=otherRunning||journalDate>today;$('resetTimer').disabled=otherRunning;
-  $('timerDuration').textContent=dialogMode==='restart'?'2 min':'5 min';
+  $('timerDuration').textContent=dialogMode==='restart'?'2 min':'1 min';
   $('timerFace').style.setProperty('--elapsed',Math.max(0,Math.min(1,1-seconds/duration()))*360+'deg');
   $('activeSession').hidden=!otherRunning;
   if(otherRunning)$('timerNote').textContent='Another timer is running for '+longDate(timer.date)+'. Your writing here will still save.';

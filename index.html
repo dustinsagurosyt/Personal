@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=16">
+  <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 <main>
@@ -19,21 +19,12 @@
   <section class="progress" aria-label="Monthly progress">
     <div class="month-heading"><h1 id="monthTitle">Your month</h1><label class="year-picker"><span class="sr-only">Year</span><select id="year" aria-label="Year"></select><span aria-hidden="true">⌄</span></label></div>
     <div class="month-navigation"><button id="previousMonth" class="arrow-button" aria-label="Previous month">‹</button><div id="monthTabs" class="month-tabs" role="tablist" aria-label="Months"></div><button id="nextMonth" class="arrow-button" aria-label="Next month">›</button></div>
-    <div class="stat-line"><div class="stats" aria-label="Statistics for this month">
-      <div class="stat" title="Longest run of completed days within this month"><span class="stat-value"><span id="bestStreak">0</span> <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-          <path d="M12 2.5c.3 4-2.7 5.5-3.2 8.4-.9-.4-1.5-1.3-1.6-2.4-1.8 1.8-3 4-3 6.3a7.8 7.8 0 0 0 15.6 0c0-4.6-3.3-9.3-7.8-12.3Z"/>
-          <path d="M12.5 13c.2 1.8 2 2.8 2 4.6a2.5 2.5 0 0 1-5 0c0-1.8 1.6-3.1 3-4.6Z"/>
-        </svg></span><span class="stat-label">Best streak</span></div>
-      <div class="stat" title="Days with both daily goals completed"><span class="stat-value"><span id="completedDays">0</span> <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="var(--green, #7da673)" stroke-width="1.8">
-          <rect x="5" y="5" width="14" height="14" rx="3.5"/>
-        </svg></span><span class="stat-label">Days done</span></div>
-      <div class="stat" title="Completed days divided by tracked calendar days through today"><span class="stat-value"><span id="completionRate">—</span> <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" stroke="currentColor">
-          <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z"/>
-          <path d="M7 6H3v1.5a4 4 0 0 0 4 4m10-5.5h4v1.5a4 4 0 0 1-4 4M12 14v6m-4 0h8"/>
-        </svg></span><span class="stat-label">Completion</span></div>
-    </div></div>
-
     <div id="calendarPanel" class="calendar-panel" role="tabpanel" aria-labelledby="monthTitle"><div class="weekdays" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div id="calendar" class="calendar" aria-label="Days in this month"></div></div>
+    <div class="stat-line"><div class="stats" aria-label="Statistics for this month">
+      <div class="stat" title="Longest run of completed days within this month"><span class="stat-value"><span id="bestStreak">0</span></span><span class="stat-label">Best streak</span></div>
+      <div class="stat" title="Days with both daily goals completed"><span class="stat-value"><span id="completedDays">0</span></span><span class="stat-label">Days done</span></div>
+      <div class="stat" title="Completed days divided by tracked calendar days through today"><span class="stat-value"><span id="completionRate">—</span></span><span class="stat-label">Completion</span></div>
+    </div></div>
   </section>
 
   <section id="dailyPanel" class="daily-panel" aria-labelledby="dayTitle">

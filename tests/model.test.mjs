@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {rewardProgress,complete,practiceGoal,videoGoal,monthDates,monthStats,normalizeState,updateRecord,recordFor} from '../model.mjs';
+import { pebbleBalance,rewardProgress,complete,practiceGoal,videoGoal,monthDates,monthStats,normalizeState,updateRecord,recordFor} from '../model.mjs';
 test('gratitude needs writing and completion; video limit stays strictly under 60',()=>{
   for(const value of ['',null,undefined,' ',NaN,false,true,{},-1,60,'60',61,1441])assert.equal(complete({gratitudeDone:true,gratitudeText:'A warm meal',minutes:value}),false,String(value));
   for(const value of [0,'0',20,59,59.5])assert.equal(complete({gratitudeDone:true,gratitudeText:'A warm meal',minutes:value}),true,String(value));
@@ -26,4 +26,13 @@ test('rewards span months and group distinct completed entries into capsules',()
   days['2026-10-31']={gratitudeDone:false,gratitudeText:'Draft',minutes:5};
   days['2026-11-04']={gratitudeDone:true,gratitudeText:'Future',minutes:5};
   assert.deepEqual(rewardProgress({days},'2026-11-03'),{leaves:5,branches:1,entries:10,capsules:[dates[0],dates[5]]});
+});
+
+test('pebbles accumulate at 3, 5 and 7 days per streak across month boundaries',()=>{
+  const day={gratitudeDone:true,gratitudeText:'A good moment',minutes:20};
+  const dates=['2026-10-29','2026-10-30','2026-10-31','2026-11-01','2026-11-02','2026-11-03','2026-11-04','2026-11-05','2026-11-07','2026-11-08','2026-11-09'];
+  const state=normalizeState({days:Object.fromEntries(dates.map(key=>[key,day]))},'2026-11-09');
+  for(const [date,balance] of [['2026-10-30',0],['2026-10-31',1],['2026-11-02',3],['2026-11-04',6],['2026-11-05',6],['2026-11-06',6],['2026-11-09',7]]){
+    assert.equal(pebbleBalance(state,date),balance);
+  }
 });

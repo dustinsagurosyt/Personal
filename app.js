@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=26';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=35';
 import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);
@@ -105,6 +105,7 @@ function renderProgress(){
   renderRewards();
   const stats=monthStats(state,viewYear,viewMonth,today);
   $('monthTitle').textContent=MONTHS[viewMonth];$('currentStreak').textContent=currentStreak(state,today);$('completedDays').textContent=stats.count;
+  $('pebbleBalance').textContent=pebbleBalance(state,today);
 
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
   const dates=monthDates(viewYear,viewMonth),offset=parseDate(dates[0]).getDay();

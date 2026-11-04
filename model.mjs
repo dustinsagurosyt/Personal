@@ -35,6 +35,21 @@ export function currentStreak(state, today) {
   }
   return count;
 }
+const STREAK_PEBBLES = {3:1, 5:2, 7:3};
+
+export function pebbleBalance(state, today) {
+  const completed = Object.keys(state.days)
+    .filter(key=>key<=today&&parseDate(key)&&complete(state.days[key],key,state))
+    .sort();
+  let balance=0, run=0, previous;
+  for(const key of completed){
+    run=previous&&addDays(previous,1)===key?run+1:1;
+    balance+=STREAK_PEBBLES[run]??0;
+    previous=key;
+  }
+  return balance;
+}
+
 export function monthDates(year, month) {
   return Array.from({length:new Date(year,month+1,0).getDate()},(_,i)=>dateKey(new Date(year,month,i+1,12)));
 }

@@ -13,16 +13,14 @@ try {
   storageError='Your saved record could not be opened. Download a backup before clearing browser data.';
   unreadable=true;
 }
-let journalDate=today,dialogMode='gratitude';
+let journalDate=today;
 let timer={date:today,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};
 try {
   const saved=JSON.parse(localStorage.getItem(TIMER_KEY));
-  if(saved && parseDate(saved.date) && saved.date<=today && ['gratitude','restart'].includes(saved.mode) && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=(saved.mode==='restart'?120:300) && Number.isFinite(saved.deadline) && saved.deadline>=0){
+  if(saved && parseDate(saved.date) && saved.date<=today && saved.mode==='gratitude' && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=300 && Number.isFinite(saved.deadline) && saved.deadline>=0){
     timer=saved;
-    if(timer.mode==='gratitude'){
-      timer.remaining=Math.min(timer.remaining,GRATITUDE_SECONDS);
-      if(timer.deadline)timer.deadline=Math.min(timer.deadline,Date.now()+GRATITUDE_SECONDS*1000);
-    }
+    timer.remaining=Math.min(timer.remaining,GRATITUDE_SECONDS);
+    if(timer.deadline)timer.deadline=Math.min(timer.deadline,Date.now()+GRATITUDE_SECONDS*1000);
   }
 } catch {}
 const upcomingMonth=()=>{const d=parseDate(today);return new Date(d.getFullYear(),d.getMonth()+1,1,12)};
@@ -129,14 +127,13 @@ function renderDailyStatus(){
   if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n<60){message='Under 60 minutes. Your video goal is met.';tone='success'}else{message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
   $('videoFeedback').hidden=!message;
   $('videoFeedback').textContent=message;$('videoFeedback').className='feedback'+(tone?' '+tone:'');
-  $('restartFeedback').textContent=record.restarts?`${record.restarts} small restart${record.restarts===1?'':'s'} recorded for this day.`:'';
 }
 function renderDay(){
   const record=currentRecord();
   $('dayTitle').textContent=isFuture()?`${MONTHS[viewMonth]} preview`:selected===today?'Today, '+parseDate(selected).toLocaleDateString(undefined,{month:'short',day:'numeric'}):parseDate(selected).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 
   $('gratitudeDone').checked=practiceGoal(record,selected,state);$('minutes').value=record.minutes??'';
-  for(const id of ['gratitudeDone','minutes','openJournal','restart'])$(id).disabled=isFuture();$('futureMessage').hidden=!isFuture();
+  for(const id of ['gratitudeDone','minutes','openJournal'])$(id).disabled=isFuture();$('futureMessage').hidden=!isFuture();
   renderDailyStatus();renderSave();renderTimer();
 }
 function selectDay(key){
@@ -217,35 +214,30 @@ surface.addEventListener('pointercancel',()=>{swipe=null});
 surface.addEventListener('pointerup',event=>{if(!swipe)return;const dx=event.clientX-swipe.x,dy=event.clientY-swipe.y;swipe=null;if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)*1.5)moveMonth(dx<0?1:-1)});
 }
 function remainingSeconds(){return timer.deadline?Math.max(0,Math.ceil((timer.deadline-Date.now())/1000)):timer.remaining}
-function aligned(){return timer.date===journalDate&&timer.mode===dialogMode}
-function duration(){return dialogMode==='restart'?120:GRATITUDE_SECONDS}
+function aligned(){return timer.date===journalDate}
 function journalSaveStatus(){
   const status=$('journalSaved');
   status.textContent=storageError;
   status.hidden=!storageError;
   status.classList.toggle('error',!!storageError);
 }
-function openJournal(key=selected,autostart=false,mode='gratitude'){
-  journalDate=key;dialogMode=mode;
+function openJournal(key=selected,autostart=false){
+  journalDate=key;
   $('journalDate').textContent=longDate(key);$('gratitudeText').value=recordFor(state,key).gratitudeText||'';
-  $('sessionBadge').textContent=mode==='restart'?'Restart':'Gratitude';$('journalTitle').textContent=mode==='restart'?'One small beginning.':'What am I grateful for?';$('sessionIcon').textContent=mode==='restart'?'↻':'🌿';$('writingPanel').hidden=mode==='restart';
-  $('finishJournal').setAttribute('aria-label',mode==='restart'?'Finish restart':'Save and complete gratitude entry');
   $('timerNote').textContent='';journalSaveStatus();
   if(!$('journalDialog').open)$('journalDialog').showModal();
-  if(autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode,remaining:mode==='restart'?120:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};startOrPause()}
+  if(autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};startOrPause()}
   renderTimer();
 }
 function renderTimer(){
   let seconds=remainingSeconds();
-  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(aligned())$('timerNote').textContent=timer.mode==='gratitude'?'One minute is up. Tap the checkmark when your entry is ready.':'Two minutes done. You’ve made a start.'}
-  if(!aligned())seconds=duration();
+  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(aligned())$('timerNote').textContent='One minute is up. Tap the checkmark when your entry is ready.'}
+  if(!aligned())seconds=GRATITUDE_SECONDS;
   $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
-  $('clock').setAttribute('aria-label',(dialogMode==='restart'?'Restart':'Gratitude')+' timer');
   const running=aligned()&&!!timer.deadline,otherRunning=!aligned()&&!!timer.deadline;
   $('pauseIcon').textContent=running?'Ⅱ':'▶';$('startTimer').setAttribute('aria-label',running?'Pause timer':aligned()&&timer.started&&!timer.finished?'Resume timer':'Start timer');
   $('startTimer').disabled=otherRunning||journalDate>today;$('resetTimer').disabled=otherRunning;
-  $('timerDuration').textContent=dialogMode==='restart'?'2 min':'1 min';
-  $('timerFace').style.setProperty('--elapsed',Math.max(0,Math.min(1,1-seconds/duration()))*360+'deg');
+  $('timerFace').style.setProperty('--elapsed',Math.max(0,Math.min(1,1-seconds/GRATITUDE_SECONDS))*360+'deg');
   $('activeSession').hidden=!otherRunning;
   if(otherRunning)$('timerNote').textContent='Another timer is running for '+longDate(timer.date)+'. Your writing here will still save.';
 }
@@ -253,7 +245,7 @@ function startOrPause(){
   if(!aligned()&&timer.deadline){renderTimer();return}
   if(aligned()&&timer.deadline){timer.remaining=remainingSeconds();timer.deadline=0;$('timerNote').textContent='Paused.'}
   else{
-    if(!aligned()||timer.finished)timer={date:journalDate,mode:dialogMode,remaining:duration(),deadline:0,finished:false,started:false};
+    if(!aligned()||timer.finished)timer={date:journalDate,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};
     if(timer.date>today)return;
     timer.deadline=Date.now()+timer.remaining*1000;timer.started=true;$('timerNote').textContent='';
   }
@@ -269,22 +261,16 @@ $('gratitudeText').oninput=()=>{
 $('startTimer').onclick=startOrPause;
 $('resetTimer').onclick=()=>{
   if(!aligned()&&timer.deadline)return;
-  timer={date:journalDate,mode:dialogMode,remaining:duration(),deadline:0,finished:false,started:false};$('timerNote').textContent='';saveTimer();renderTimer();
+  timer={date:journalDate,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};$('timerNote').textContent='';saveTimer();renderTimer();
 };
-$('activeSession').onclick=()=>openJournal(timer.date,false,timer.mode);
+$('activeSession').onclick=()=>openJournal(timer.date);
 $('finishJournal').onclick=()=>{
-  if(dialogMode==='gratitude'){
-    const text=$('gratitudeText').value;
-    if(!text.trim()){$('timerNote').textContent='Write something you’re grateful for before finishing.';$('gratitudeText').focus();return}
-    setRecord({gratitudeText:text,gratitudeDone:true},journalDate);journalSaveStatus();
-    if(storageError){$('timerNote').textContent='Your entry could not be saved. Copy your writing before leaving.';return}
-  }
+  const text=$('gratitudeText').value;
+  if(!text.trim()){$('timerNote').textContent='Write something you’re grateful for before finishing.';$('gratitudeText').focus();return}
+  setRecord({gratitudeText:text,gratitudeDone:true},journalDate);journalSaveStatus();
+  if(storageError){$('timerNote').textContent='Your entry could not be saved. Copy your writing before leaving.';return}
   if(aligned()){timer.remaining=0;timer.deadline=0;timer.finished=true;saveTimer()}
   $('journalDialog').close();renderProgress();renderDailyStatus();
-};
-$('restart').onclick=()=>{
-  if(timer.deadline||(timer.mode==='gratitude'&&timer.started&&!timer.finished)){openJournal(timer.date,false,timer.mode);$('timerNote').textContent='Your current timer is still in progress. Reset or finish it before a two-minute restart.';return}
-  setRecord({restarts:(currentRecord().restarts||0)+1});timer={date:selected,mode:'restart',remaining:120,deadline:0,finished:false,started:false};saveTimer();openJournal(selected,false,'restart');
 };
 $('export').onclick=()=>{
   let record=JSON.stringify(state,null,2);if(unreadable){try{record=localStorage.getItem(STORAGE_KEY)||record}catch{}}

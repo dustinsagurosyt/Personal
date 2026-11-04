@@ -20,8 +20,6 @@ The writing screen has a soft circular progress face, a one-minute countdown, pa
 - Entries are saved for the date you opened. Browsing a different month or passing midnight does not move an entry to another day.
 - If a timer is running for another day, you can read or write a different entry without replacing it; use **Return to active session** to go back.
 
-A separate two-minute restart remains available after a slip. Finishing that short restart does not complete the gratitude goal.
-
 ## History and earlier focus records
 
 The app opens to the current month and today’s checklist. The month strip shows the viewed month, the two before it, and the month after it. Browse using the tabs, arrows, or left/right swipes on the month strip or calendar. You can preview the upcoming month without editing its dates. Weeks begin on Sunday. The year selector shows earlier years. Upcoming days cannot be edited.
@@ -52,4 +50,4 @@ With Node.js available:
 node --test tests/*.test.mjs
 ```
 
-Checks cover writing persistence, blank-entry validation, timer pause/resume/reset/reload, date ownership, historical focus records, Sunday-first months, leap years, the strict video limit, and two-minute restarts.
+Checks cover writing persistence, blank-entry validation, timer pause/resume/reset/reload, date ownership, historical focus records, Sunday-first months, leap years, and the strict video limit.

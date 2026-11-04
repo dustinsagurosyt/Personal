@@ -36,8 +36,11 @@ test('expired timer does not mark an empty entry complete or attach it to the wr
 test('historical writing does not stop a different day’s timer or mix journal entries',()=>{
   const h=harness();h.el('openJournal').onclick();h.el('gratitudeText').value='Today’s gratitude';h.el('gratitudeText').oninput();h.el('closeJournal').onclick();h.el('previousMonth').onclick();h.el('openJournal').onclick();assert.equal(h.el('startTimer').disabled,true);h.el('gratitudeText').value='A memory from October';h.el('gratitudeText').oninput();h.el('finishJournal').onclick();const saved=JSON.parse(h.storage.get('attention-reset-v1'));assert.equal(saved.days['2026-10-03'].gratitudeText,'A memory from October');assert.equal(saved.days['2026-11-03'].gratitudeText,'Today’s gratitude');assert(JSON.parse(h.storage.get('attention-reset-gratitude-timer-v1')).deadline>0);
 });
-test('two-minute restarts do not complete the gratitude goal',()=>{
-  const h=harness();h.el('restart').onclick();assert.equal(h.el('clock').textContent,'02:00');assert.equal(h.el('writingPanel').hidden,true);h.el('startTimer').onclick();h.advance(120000);h.el('finishJournal').onclick();assert.equal(h.el('gratitudeDone').checked,false);assert.equal(JSON.parse(h.storage.get('attention-reset-v1')).days['2026-11-03'].restarts,1);
+test('a saved timer from the removed restart feature does not load into gratitude',()=>{
+  const h=harness({}, {date:'2026-11-03',mode:'restart',remaining:120,deadline:0,finished:false,started:true});
+  h.el('openJournal').onclick();
+  assert.equal(h.el('clock').textContent,'01:00');
+  assert.equal(h.el('journalDialog').open,true);
 });
 test('unreadable previous records remain protected',()=>{
   const h=harness({'attention-reset-v1':'{broken-json'});h.el('openJournal').onclick();h.el('gratitudeText').value='A good day';h.el('gratitudeText').oninput();h.el('finishJournal').onclick();assert.equal(h.storage.get('attention-reset-v1'),'{broken-json');assert.equal(h.el('journalDialog').open,true);assert.match(h.el('saved').textContent,/protect an unreadable previous record/);

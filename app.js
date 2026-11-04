@@ -125,12 +125,12 @@ function renderProgress(){
   }
 }
 function renderDailyStatus(){
-  const record=currentRecord(),video=videoGoal(record),practice=practiceGoal(record,selected,state),count=(practice?1:0)+(video?1:0);
+  const record=currentRecord(),video=videoGoal(record),practice=practiceGoal(record,selected,state);
   $('gratitudeDone').checked=practice;
   const legacy=selected<state.gratitudeSince && typeof record.gratitudeDone!=='boolean' && typeof record.focus==='boolean';
   $('gratitudeLabel').textContent=legacy?'Previous focus session':'1-minute gratitude';
   $('openJournal').textContent=timer.date===selected&&timer.deadline?'Continue ↗':record.gratitudeText?.trim()?'Read ↗':'Write ↗';
-  $('dailyStatus').textContent=count===2?'Both goals met ✓':`${count} of 2`;$('dailyStatus').classList.toggle('done',count===2);$('videoMark').classList.toggle('done',video);
+  $('videoMark').classList.toggle('done',video);
   const raw=record.minutes;let message='',tone='';
   if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n>=60){message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
   $('videoFeedback').hidden=!message;

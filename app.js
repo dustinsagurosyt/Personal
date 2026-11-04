@@ -252,11 +252,9 @@ $('export').onclick=()=>{
 const DAYS_PER_PLANT=15;
 let gardenLeaves;
 let pendingGrowth;
-let memoryDates=[];
-let memoryDrawing=false;
 
 function showView(view){
-  for(const tab of ['home','garden','memories']){
+  for(const tab of ['home','garden']){
     const active=tab===view;
     $(tab+'View').hidden=!active;
     $(tab+'Tab').setAttribute('aria-pressed',String(active));
@@ -265,7 +263,7 @@ function showView(view){
   window.scrollTo(0,0);
   if(view==='garden')animateEarnedGrowth();
 }
-for(const tab of ['home','garden','memories']){
+for(const tab of ['home','garden']){
   $(tab+'Tab').onclick=()=>showView(tab);
 }
 
@@ -327,51 +325,7 @@ function renderRewards(){
   $('gardenDays').textContent=`${leaves} completed ${leaves===1?'day':'days'}`;
   const grown=Math.floor(leaves/DAYS_PER_PLANT);
   $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;
-  renderMemoryJar();
 }
-
-function renderMemoryJar(){
-  memoryDates=Object.keys(state.days).filter(key=>key<=today&&parseDate(key)&&memoryText(key));
-  $('drawMemory').disabled=memoryDates.length===0||memoryDrawing;
-  $('memoryEmpty').hidden=memoryDates.length!==0;
-}
-
-function memoryText(key){
-  const text=recordFor(state,key).gratitudeText;
-  return typeof text==='string'?text.trim():'';
-}
-
-$('drawMemory').onclick=()=>{
-  if(memoryDrawing||!memoryDates.length)return;
-  const key=memoryDates[Math.floor(Math.random()*memoryDates.length)];
-  const stage=$('memoryStage');
-  const quote=$('memoryQuote');
-  const pebble=$('memoryPebble');
-  const date=$('memoryDate');
-  memoryDrawing=true;
-  $('drawMemory').disabled=true;
-  quote.hidden=true;
-  date.textContent='';
-  pebble.hidden=false;
-
-  const reveal=()=>{
-    stage.classList.toggle('is-pouring',false);
-    memoryDrawing=false;
-    const text=memoryText(key);
-    pebble.hidden=!text;
-    if(text){
-      date.setAttribute('datetime',key);
-      date.textContent=longDate(key);
-      quote.textContent=text;
-      quote.hidden=false;
-    }
-    renderMemoryJar();
-  };
-  if(motionAllowed()){
-    stage.classList.add('is-pouring');
-    setTimeout(reveal,1840);
-  }else reveal();
-};
 
 function refreshToday(){const latest=dateKey();if(latest!==today){const followedToday=selected===today;today=latest;if(followedToday){const d=parseDate(today);selected=today;viewYear=d.getFullYear();viewMonth=d.getMonth()}renderYears();renderTabs();renderProgress();renderDay()}renderTimer()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});

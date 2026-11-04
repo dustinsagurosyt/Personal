@@ -105,7 +105,8 @@ function renderProgress(){
   renderRewards();
   const stats=monthStats(state,viewYear,viewMonth,today);
   $('monthTitle').textContent=MONTHS[viewMonth];$('currentStreak').textContent=currentStreak(state,today);$('completedDays').textContent=stats.count;
-  $('pebbleBalance').textContent=pebbleBalance(state,today);
+  const pebbles=pebbleBalance(state,today);
+  $('pebbleBalance').textContent=`${pebbles} ${pebbles===1?'pebble':'pebbles'}`;
 
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
   const dates=monthDates(viewYear,viewMonth),offset=parseDate(dates[0]).getDay();

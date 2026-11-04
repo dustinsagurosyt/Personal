@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=31">
+  <link rel="stylesheet" href="style.css?v=32">
 </head>
 <body>
 <main>
@@ -56,18 +56,24 @@
       </svg>
       <div><strong id="nextPlotTitle"></strong><p>The next completed day plants a seed.</p></div>
     </div>
-    <section class="gratitude-stones" aria-labelledby="stonesTitle">
-      <h2 id="stonesTitle">Gratitude stones</h2>
-      <p id="capsuleProgress"></p>
-      <div id="stones" class="stone-grid"></div>
-      <div id="capsuleReveal" class="capsule-reveal" hidden>
-        <div class="capsule-heading"><span id="capsulePosition"></span><button id="closeCapsule" type="button" aria-label="Close gratitude stone">×</button></div>
-        <p id="capsuleDate" class="stone-date"></p>
-        <blockquote id="capsuleQuote"></blockquote>
-        <div id="capsuleNavigation" class="capsule-navigation">
-          <button id="olderCapsule" type="button">‹ Previous stone</button>
-          <button id="newerCapsule" type="button">Next stone ›</button>
-        </div>
+    <section class="memory-jar" aria-labelledby="memoryJarTitle">
+      <h2 id="memoryJarTitle">Memory Jar</h2>
+      <div class="memory-stage" id="memoryStage">
+        <svg class="memory-vessel" viewBox="0 0 96 112" aria-hidden="true">
+          <path d="M29 19v12c0 4-11 9-14 18-2 6-2 43 3 49 7 8 53 8 60 0 5-6 5-43 3-49-3-9-14-14-14-18V19Z" fill="#dae8da" stroke="#67866c" stroke-width="2.5"/>
+          <path d="M25 66V54q0-5 4-9" fill="none" stroke="#f7faf2" stroke-width="4" stroke-linecap="round"/>
+          <path d="M21 87q4-12 20-8 8 3 4 12-4 7-17 5-8-1-7-9Z" fill="#a9b79c"/>
+          <path d="M45 88q1-11 13-13 14-1 17 9 4 10-9 13-17 3-21-9Z" fill="#c2ad94"/>
+          <path d="M32 76q2-9 14-12 14-2 17 6 3 8-9 11-17 4-22-5Z" fill="#8fa68c"/>
+          <ellipse cx="48" cy="18" rx="22" ry="6" fill="#718e73" stroke="#55715a" stroke-width="2"/>
+          <ellipse cx="48" cy="17" rx="16" ry="2.7" fill="#405a47"/>
+        </svg>
+        <div class="memory-pebble" id="memoryPebble" hidden><time id="memoryDate"></time></div>
+      </div>
+      <button type="button" id="drawMemory" aria-controls="memoryEntry">Draw a stone</button>
+      <p id="memoryEmpty" hidden>Write a gratitude entry to add your first stone.</p>
+      <div id="memoryEntry" class="memory-entry" aria-live="polite">
+        <blockquote id="memoryQuote" hidden></blockquote>
       </div>
     </section>
   </section>
@@ -95,6 +101,6 @@
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=31"></script>
+<script type="module" src="app.js?v=32"></script>
 </body>
 </html>

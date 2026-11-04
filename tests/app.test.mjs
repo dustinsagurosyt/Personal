@@ -14,7 +14,7 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
   }
   for(const match of html.matchAll(/\bid="([^"]+)"/g))roots.set(match[1],new Element(match[1]));
   roots.get('gardenView').hidden=true;
-  roots.get('capsuleReveal').hidden=true;
+  roots.get('memoryQuote').hidden=true;
   const find=(id)=>{if(roots.has(id))return roots.get(id);const visit=el=>{if(el.id===id)return el;for(const c of el.children){const r=visit(c);if(r)return r}};for(const root of roots.values()){const r=visit(root);if(r)return r}return null};
   const storage=new Map(Object.entries(initial));if(timer)storage.set('attention-reset-gratitude-timer-v1',JSON.stringify(timer));
   const intervals=[];const NativeDate=Date;class Clock extends NativeDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
@@ -72,36 +72,29 @@ test('previewing December from November 2 does not select a disabled date',()=>{
   assert.equal(november2.getAttribute('aria-pressed'),'true');
 });
 
-test('the fifth completed entry unlocks a private capsule and a fifth goal day advances plant growth',()=>{
-  const days=Object.fromEntries(Array.from({length:4},(_,index)=>[
-    `2026-10-${25+index}`,{gratitudeDone:true,gratitudeText:`Memory ${index+1}\nAnother line`,minutes:10}
-  ]));
-  const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-10-25',days})});
-  assert.equal(h.el('gardenDays').textContent,'4 completed days');
-  assert.equal(h.el('gardenCount'),null);
-  assert.equal(h.el('stones').children.length,0);
-  h.el('openJournal').onclick();
-  h.el('gratitudeText').value='My fifth entry';
-  h.el('gratitudeText').oninput();
-  assert.equal(h.el('stones').children.length,0);
-  h.el('finishJournal').onclick();
-  assert.equal(h.el('stones').children.length,1);
-  assert.equal(h.el('capsuleReveal').hidden,true);
-  assert.equal(h.el('capsuleQuote').textContent,undefined);
+test('the Memory Jar draws full dated entries from all saved writing, and goal days still grow plants',()=>{
+  const days={
+    '2026-10-28':{gratitudeDone:true,gratitudeText:'First entry',minutes:10},
+    '2026-11-01':{gratitudeDone:false,gratitudeText:'A longer entry\nAnother line'}
+  };
+  const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-10-28',days})});
+  assert.equal(h.el('gardenDays').textContent,'1 completed day');
+  assert.equal(h.el('memoryQuote').hidden,true);
   h.el('gardenTab').onclick();
-  assert.equal(h.el('homeView').hidden,true);
-  assert.equal(h.el('gardenView').hidden,false);
-  h.el('stones').children[0].onclick();
-  assert.equal(h.el('capsuleQuote').textContent,'Memory 1');
-  h.el('closeCapsule').onclick();
-  assert.equal(h.el('capsuleReveal').hidden,true);
-  h.el('minutes').value='20';
-  h.el('minutes').oninput();
-  assert.equal(h.el('gardenDays').textContent,'5 completed days');
-  assert.match(h.el('gardenPlots').innerHTML,/#day-5/);
+  h.run('Math.random=()=>0.99');
+  h.el('drawMemory').onclick();
+  assert.equal(h.el('memoryDate').getAttribute('datetime'),'2026-11-01');
+  assert.equal(h.el('memoryQuote').textContent,'A longer entry\nAnother line');
+  h.el('drawMemory').onclick();
+  assert.equal(h.el('memoryDate').getAttribute('datetime'),'2026-11-01');
+  h.run('Math.random=()=>0');
+  h.el('drawMemory').onclick();
+  assert.equal(h.el('memoryDate').getAttribute('datetime'),'2026-10-28');
+  assert.equal(h.el('memoryQuote').textContent,'First entry');
+  assert.equal(harness().el('drawMemory').disabled,true);
 });
 
-test('90 completed days show all six species, the next plot, and 18 stones on the Garden tab',()=>{
+test('90 completed days show all six species, the next plot, and the Memory Jar on the Garden tab',()=>{
   const days={};
   for(let offset=89;offset>=0;offset--){
     const date=new Date(2026,10,3-offset,12);
@@ -114,11 +107,7 @@ test('90 completed days show all six species, the next plot, and 18 stones on th
   assert.equal(h.el('gardenPlants').textContent,'6 plants grown');
   for(const plant of ['Fern','Succulent','Sunflower','Lavender','Monstera','Little tree'])assert(h.el('gardenPlots').innerHTML.includes(plant));
   assert.equal(h.el('nextPlotTitle').textContent,'Plot 7');
-  assert.equal(h.el('stones').children.length,18);
-  h.el('stones').children[17].onclick();
-  assert.equal(h.el('capsulePosition').textContent,'Stone 18 of 18');
-  h.el('olderCapsule').onclick();
-  assert.equal(h.el('capsulePosition').textContent,'Stone 17 of 18');
+  assert.equal(h.el('drawMemory').disabled,false);
   h.el('homeTab').onclick();
   assert.equal(h.el('gardenView').hidden,true);
   assert.equal(h.el('homeView').hidden,false);

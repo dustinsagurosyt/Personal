@@ -250,18 +250,10 @@ $('export').onclick=()=>{
 };
 
 const DAYS_PER_PLANT=15;
-let capsuleIndex;
 let gardenLeaves;
 let pendingGrowth;
-let stoneCount;
-const stoneShapes = [
-  "M5 29C4 20 14 13 26 12C39 10 54 14 59 22C64 32 53 39 38 41C24 43 7 40 5 29Z",
-  "M12 37C5 32 9 22 18 14C24 8 32 6 40 10C50 16 57 28 54 36C51 44 19 45 12 37Z",
-  "M10 22C15 14 26 11 38 12C51 13 59 20 58 30C56 41 43 43 28 41C15 40 4 34 10 22Z",
-  "M9 31C7 22 17 20 25 15C35 8 45 9 53 14C60 19 57 32 49 38C39 46 14 44 9 31Z",
-  "M10 26C11 17 19 10 29 10C39 10 47 13 53 21C58 28 55 37 46 41C35 46 23 43 15 38C10 35 8 31 10 26Z",
-  "M6 31C6 24 13 19 24 17C34 16 43 13 51 16C58 19 61 24 58 31C53 40 42 42 28 42C15 42 6 39 6 31Z"
-];
+let memoryDates=[];
+let memoryDrawing=false;
 
 function showView(garden){
   $('homeView').hidden=garden;
@@ -328,55 +320,56 @@ function drawPlots(leaves){
 }
 
 function renderRewards(){
-  const {leaves,entries,capsules}=rewardProgress(state,today);
+  const {leaves}=rewardProgress(state,today);
   drawPlots(leaves);
   $('gardenDays').textContent=`${leaves} completed ${leaves===1?'day':'days'}`;
   const grown=Math.floor(leaves/DAYS_PER_PLANT);
   $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;
-  const unlocked=capsules.length;
-  const remainder=entries%5;
-  $('capsuleProgress').textContent=unlocked?`${unlocked} unlocked · ${remainder}/5 entries to next`:`${entries}/5 entries to unlock a stone`;
-  const stones=$('stones');
-  if(stoneCount!==unlocked){
-    stoneCount=unlocked;
-    stones.replaceChildren();
-    for(let index=0;index<unlocked;index++){
-      const button=document.createElement('button');
-      button.type='button';
-      const shape=stoneShapes[index%stoneShapes.length];
-      button.innerHTML=`<svg viewBox="0 0 64 50" aria-hidden="true"><path d="${shape}"/></svg><span>${index+1}</span>`;
-      button.setAttribute('aria-label',`Gratitude stone ${index+1}`);
-      button.setAttribute('aria-controls','capsuleReveal');
-      button.onclick=()=>{
-        capsuleIndex=index;
-        renderRewards();
-        $('closeCapsule').focus();
-      };
-      stones.append(button);
-    }
-  }
-  if(capsuleIndex!==undefined&&capsuleIndex>=unlocked)capsuleIndex=undefined;
-  Array.from(stones.children).forEach((button,index)=>button.setAttribute('aria-pressed',String(index===capsuleIndex)));
-  $('capsuleReveal').hidden=capsuleIndex===undefined;
-  if(capsuleIndex===undefined)return;
-  const key=capsules[capsuleIndex];
-  const line=recordFor(state,key).gratitudeText.split(/\r?\n/).find(text=>text.trim()).trim();
-  $('capsuleDate').textContent=longDate(key);
-  $('capsuleQuote').textContent=line.length>180?line.slice(0,177).trimEnd()+'…':line;
-  $('capsulePosition').textContent=`Stone ${capsuleIndex+1} of ${unlocked}`;
-  $('capsuleNavigation').hidden=unlocked<2;
-  $('olderCapsule').disabled=capsuleIndex===0;
-  $('newerCapsule').disabled=capsuleIndex===unlocked-1;
+  renderMemoryJar();
 }
-$('closeCapsule').onclick=()=>{
-  const button=$('stones').children[capsuleIndex];
-  capsuleIndex=undefined;
-  $('capsuleQuote').textContent='';
-  renderRewards();
-  button?.focus();
+
+function renderMemoryJar(){
+  memoryDates=Object.keys(state.days).filter(key=>key<=today&&parseDate(key)&&memoryText(key));
+  $('drawMemory').disabled=memoryDates.length===0||memoryDrawing;
+  $('memoryEmpty').hidden=memoryDates.length!==0;
+}
+
+function memoryText(key){
+  const text=recordFor(state,key).gratitudeText;
+  return typeof text==='string'?text.trim():'';
+}
+
+$('drawMemory').onclick=()=>{
+  if(memoryDrawing||!memoryDates.length)return;
+  const key=memoryDates[Math.floor(Math.random()*memoryDates.length)];
+  const stage=$('memoryStage');
+  const quote=$('memoryQuote');
+  const pebble=$('memoryPebble');
+  const date=$('memoryDate');
+  memoryDrawing=true;
+  $('drawMemory').disabled=true;
+  quote.hidden=true;
+  date.textContent='';
+  pebble.hidden=false;
+
+  const reveal=()=>{
+    stage.classList.toggle('is-pouring',false);
+    memoryDrawing=false;
+    const text=memoryText(key);
+    pebble.hidden=!text;
+    if(text){
+      date.setAttribute('datetime',key);
+      date.textContent=longDate(key);
+      quote.textContent=text;
+      quote.hidden=false;
+    }
+    renderMemoryJar();
+  };
+  if(motionAllowed()){
+    stage.classList.add('is-pouring');
+    setTimeout(reveal,900);
+  }else reveal();
 };
-$('olderCapsule').onclick=()=>{capsuleIndex--;renderRewards()};
-$('newerCapsule').onclick=()=>{capsuleIndex++;renderRewards()};
 
 function refreshToday(){const latest=dateKey();if(latest!==today){const followedToday=selected===today;today=latest;if(followedToday){const d=parseDate(today);selected=today;viewYear=d.getFullYear();viewMonth=d.getMonth()}renderYears();renderTabs();renderProgress();renderDay()}renderTimer()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});

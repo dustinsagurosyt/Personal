@@ -24,7 +24,7 @@ A separate two-minute restart remains available after a slip. Finishing that sho
 
 ## History and earlier focus records
 
-The app opens to the current month and today’s checklist. Browse with the January–December tabs, previous/next arrows, or left/right swipes on the calendar. Weeks begin on Sunday. The year selector shows earlier years. Upcoming days cannot be edited.
+The app opens to the current month and today’s checklist. The month strip shows the viewed month, the two before it, and the month after it. Browse using the tabs, arrows, or left/right swipes on the month strip or calendar. You can preview the upcoming month without editing its dates. Weeks begin on Sunday. The year selector shows earlier years. Upcoming days cannot be edited.
 
 Tap a past day to read or edit its record. Green means both goals are met, light green with a dot means one goal is met, and today has a blue outline. The statistics show that month’s best streak, days completed, and completion rate. Future days and days before tracking began are excluded from the rate.
 

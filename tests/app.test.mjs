@@ -20,7 +20,7 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
   return {el:find,storage,run:code=>vm.runInContext(code,context),advance:ms=>{now+=ms;intervals.forEach(f=>f())}};
 }
 test('month tabs, Sunday-first alignment, swipe, and old history still work',()=>{
-  const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-11-01',days:{'2026-11-02':{focus:true,minutes:59,thoughts:'Legacy note'}}})});assert.equal(h.el('monthTitle').textContent,'November');assert.equal(h.el('monthTabs').children.length,12);assert.equal(h.el('calendar').children[0].dataset.date,'2026-11-01');assert.equal(h.el('completedDays').textContent,1);
+  const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-11-01',days:{'2026-11-02':{focus:true,minutes:59,thoughts:'Legacy note'}}})});assert.equal(h.el('monthTitle').textContent,'November');assert.deepEqual(h.el('monthTabs').children.map(tab=>tab.textContent),['Sep','Oct','Nov','Dec']);assert.equal(h.el('calendar').children[0].dataset.date,'2026-11-01');assert.equal(h.el('completedDays').textContent,1);
   h.el('calendarPanel').events.pointerdown({pointerType:'touch',clientX:10,clientY:20});h.el('calendarPanel').events.pointerup({clientX:120,clientY:22});assert.equal(h.el('monthTitle').textContent,'October');h.el('today').onclick();assert.equal(h.el('gratitudeDone').checked,false);
 });
 test('five-minute journal saves writing, pauses, resumes, resets, and survives reload',()=>{
@@ -41,4 +41,14 @@ test('two-minute restarts do not complete the gratitude goal',()=>{
 });
 test('unreadable previous records remain protected',()=>{
   const h=harness({'attention-reset-v1':'{broken-json'});h.el('openJournal').onclick();h.el('gratitudeText').value='A good day';h.el('gratitudeText').oninput();h.el('finishJournal').onclick();assert.equal(h.storage.get('attention-reset-v1'),'{broken-json');assert.equal(h.el('journalDialog').open,true);assert.match(h.el('saved').textContent,/protect an unreadable previous record/);
+});
+
+test('upcoming month is visible but read-only, and the strip crosses years',()=>{
+  const h=harness({},undefined,'2026-12-03T12:00:00');
+  assert.deepEqual(h.el('monthTabs').children.map(tab=>tab.textContent),['Oct','Nov','Dec','Jan']);
+  h.el('monthTabs').events.pointerdown({pointerType:'touch',clientX:110,clientY:20});
+  h.el('monthTabs').events.pointerup({clientX:10,clientY:21});
+  assert.equal(h.el('monthTitle').textContent,'January');assert.equal(h.el('year').value,2027);
+  assert.equal(h.el('openJournal').disabled,true);assert.equal(h.el('minutes').disabled,true);
+  h.el('today').onclick();assert.equal(h.el('monthTitle').textContent,'December');
 });

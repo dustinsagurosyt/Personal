@@ -18,6 +18,7 @@ try {
   const saved=JSON.parse(localStorage.getItem(TIMER_KEY));
   if(saved && parseDate(saved.date) && saved.date<=today && ['gratitude','restart'].includes(saved.mode) && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=(saved.mode==='restart'?120:300) && Number.isFinite(saved.deadline) && saved.deadline>=0)timer=saved;
 } catch {}
+const upcomingMonth=()=>{const d=parseDate(today);return new Date(d.getFullYear(),d.getMonth()+1,1,12)};
 const firstYear=()=>Math.max(1900,Math.min(Number(trackingStart(state,today).slice(0,4)),Number(today.slice(0,4))-4));
 const longDate=key=>parseDate(key).toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
 const isFuture=()=>selected>today;
@@ -37,21 +38,26 @@ function setRecord(patch,key=selected){
 }
 function renderYears(){
   const select=$('year');select.replaceChildren();
-  for(let year=Number(today.slice(0,4));year>=firstYear();year--){const option=document.createElement('option');option.value=year;option.textContent=year;select.append(option)}
+  for(let year=upcomingMonth().getFullYear();year>=firstYear();year--){const option=document.createElement('option');option.value=year;option.textContent=year;select.append(option)}
   select.value=viewYear;
 }
 function renderTabs(){
   const tabs=$('monthTabs');tabs.replaceChildren();
-  MONTHS.forEach((name,index)=>{
-    const button=document.createElement('button');button.className='month-tab';button.id='month-tab-'+index;button.type='button';button.role='tab';button.textContent=name.slice(0,3);button.setAttribute('aria-label',name+' '+viewYear);button.setAttribute('aria-selected',String(index===viewMonth));button.setAttribute('aria-controls','calendarPanel');button.tabIndex=index===viewMonth?0:-1;button.disabled=viewYear===Number(today.slice(0,4))&&index>Number(today.slice(5,7))-1;
-    button.onclick=()=>showMonth(viewYear,index);
+  const current=parseDate(today), viewing=new Date(viewYear,viewMonth,1,12);
+  const anchor=dateKey(viewing)>today?current:viewing;
+  for(let step=-2;step<=1;step++){
+    const date=new Date(anchor.getFullYear(),anchor.getMonth()+step,1,12);
+    const year=date.getFullYear(),index=date.getMonth(),name=MONTHS[index],active=year===viewYear&&index===viewMonth;
+    const button=document.createElement('button');button.className='month-tab';button.id='month-tab-'+index;button.type='button';button.role='tab';button.textContent=name.slice(0,3);button.setAttribute('aria-label',name+' '+year);button.setAttribute('aria-selected',String(active));button.setAttribute('aria-controls','calendarPanel');button.tabIndex=active?0:-1;button.disabled=year<firstYear()||date>upcomingMonth();
+    button.onclick=()=>showMonth(year,index);
     button.onkeydown=event=>{if(event.key==='ArrowRight'||event.key==='ArrowLeft'){event.preventDefault();moveMonth(event.key==='ArrowRight'?1:-1,true)}};
     tabs.append(button);
-  });
+  }
   $('calendarPanel').setAttribute('aria-labelledby','month-tab-'+viewMonth);
   requestAnimationFrame(()=>{const active=$('month-tab-'+viewMonth);if(active){const offset=active.offsetLeft-tabs.offsetLeft-(tabs.clientWidth-active.clientWidth)/2;tabs.scrollTo({left:Math.max(0,offset),behavior:'auto'})}});
   $('previousMonth').disabled=viewYear===firstYear()&&viewMonth===0;
-  $('nextMonth').disabled=viewYear===Number(today.slice(0,4))&&viewMonth===Number(today.slice(5,7))-1;
+  const limit=upcomingMonth();
+  $('nextMonth').disabled=viewYear===limit.getFullYear()&&viewMonth===limit.getMonth();
 }
 function renderProgress(){
   const stats=monthStats(state,viewYear,viewMonth,today);
@@ -98,13 +104,13 @@ function selectDay(key){
 }
 function showMonth(year,month){
   const target=new Date(year,month,1,12);year=target.getFullYear();month=target.getMonth();
-  if(year<firstYear()||dateKey(target)>today)return;
+  if(year<firstYear()||target>upcomingMonth())return;
   viewYear=year;viewMonth=month;
   const preferred=Number(selected.slice(8)),maxDay=year===Number(today.slice(0,4))&&month===Number(today.slice(5,7))-1?Number(today.slice(8)):new Date(year,month+1,0).getDate();
   selected=dateKey(new Date(year,month,Math.min(preferred,maxDay),12));renderYears();renderTabs();renderProgress();renderDay();
 }
 function moveMonth(amount,focusTab=false){showMonth(viewYear,viewMonth+amount);if(focusTab)requestAnimationFrame(()=>$('month-tab-'+viewMonth)?.focus())}
-$('previousMonth').onclick=()=>moveMonth(-1);$('nextMonth').onclick=()=>moveMonth(1);$('year').onchange=()=>{const year=Number($('year').value),month=year===Number(today.slice(0,4))?Math.min(viewMonth,Number(today.slice(5,7))-1):viewMonth;showMonth(year,month)};
+$('previousMonth').onclick=()=>moveMonth(-1);$('nextMonth').onclick=()=>moveMonth(1);$('year').onchange=()=>{const year=Number($('year').value),limit=upcomingMonth(),month=year===limit.getFullYear()?Math.min(viewMonth,limit.getMonth()):viewMonth;showMonth(year,month)};
 $('today').onclick=()=>selectDay(today);
 $('gratitudeDone').onchange=()=>{
   const record=currentRecord();
@@ -114,10 +120,12 @@ $('gratitudeDone').onchange=()=>{
 };
 $('minutes').oninput=()=>setRecord({minutes:$('minutes').value});
 
+for(const surface of [$('calendarPanel'),$('monthTabs')]){
 let swipe=null;
-$('calendarPanel').addEventListener('pointerdown',event=>{if(event.pointerType==='touch')swipe={x:event.clientX,y:event.clientY}});
-$('calendarPanel').addEventListener('pointercancel',()=>{swipe=null});
-$('calendarPanel').addEventListener('pointerup',event=>{if(!swipe)return;const dx=event.clientX-swipe.x,dy=event.clientY-swipe.y;swipe=null;if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)*1.5)moveMonth(dx<0?1:-1)});
+surface.addEventListener('pointerdown',event=>{if(event.pointerType==='touch')swipe={x:event.clientX,y:event.clientY}});
+surface.addEventListener('pointercancel',()=>{swipe=null});
+surface.addEventListener('pointerup',event=>{if(!swipe)return;const dx=event.clientX-swipe.x,dy=event.clientY-swipe.y;swipe=null;if(Math.abs(dx)>=50&&Math.abs(dx)>Math.abs(dy)*1.5)moveMonth(dx<0?1:-1)});
+}
 function remainingSeconds(){return timer.deadline?Math.max(0,Math.ceil((timer.deadline-Date.now())/1000)):timer.remaining}
 function aligned(){return timer.date===journalDate&&timer.mode===dialogMode}
 function duration(){return dialogMode==='restart'?120:300}

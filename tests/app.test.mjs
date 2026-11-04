@@ -186,3 +186,19 @@ test('current streak spans months and carries through an unfinished today',()=>{
   const missed=harness(stored,undefined,'2026-11-03T12:00:00');
   assert.equal(missed.el('currentStreak').textContent,0);
 });
+
+test('earned growth queues only when the completed-day count increases',()=>{
+  const h=harness();
+  assert.equal(h.run('pendingGrowth'),undefined);
+  h.run('drawPlots(4)');
+  assert.equal(h.run('pendingGrowth'),4);
+  h.run('drawPlots(4)');
+  assert.equal(h.run('pendingGrowth'),4);
+  h.el('gardenTab').onclick();
+  assert.equal(h.run('pendingGrowth'),undefined);
+  h.el('homeTab').onclick();
+  h.run('drawPlots(5)');
+  assert.equal(h.run('pendingGrowth'),5);
+  h.run('drawPlots(4)');
+  assert.equal(h.run('pendingGrowth'),undefined);
+});

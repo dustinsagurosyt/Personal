@@ -252,6 +252,7 @@ $('export').onclick=()=>{
 const DAYS_PER_PLANT=15;
 let capsuleIndex;
 let gardenLeaves;
+let pendingGrowth;
 let stoneCount;
 const stoneShapes = [
   "M5 29C4 20 14 13 26 12C39 10 54 14 59 22C64 32 53 39 38 41C24 43 7 40 5 29Z",
@@ -269,12 +270,36 @@ function showView(garden){
   $('homeTab').setAttribute('aria-pressed',String(!garden));
   $('gardenTab').setAttribute('aria-pressed',String(garden));
   window.scrollTo(0,0);
+  if(garden)animateEarnedGrowth();
 }
 $('homeTab').onclick=()=>showView(false);
 $('gardenTab').onclick=()=>showView(true);
 
+async function animateEarnedGrowth(){
+  if(pendingGrowth===undefined||$('gardenView').hidden)return;
+  const earned=pendingGrowth;
+  pendingGrowth=undefined;
+  if(!motionAllowed())return;
+  const image=document.querySelector('#gardenPlots .garden-plot:last-child img');
+  if(!image)return;
+  const index=Math.floor((earned-1)/DAYS_PER_PLANT);
+  const species=gardenSpecies[index%gardenSpecies.length];
+  const day=(earned-1)%DAYS_PER_PLANT+1;
+  const isCurrent=()=>image.isConnected&&gardenLeaves===earned&&!$('gardenView').hidden;
+  try {
+    const {playGrowth}=await import('./plant-motion.mjs?v=27');
+    if(isCurrent()){
+      image.scrollIntoView({block:'nearest',inline:'nearest'});
+      await playGrowth(image,species.asset,day,isCurrent);
+    }
+  } catch {
+    // The completed stage remains visible if the animation asset cannot load.
+  }
+}
+
 function drawPlots(leaves){
   if(gardenLeaves===leaves)return;
+  if(gardenLeaves!==undefined)pendingGrowth=leaves>gardenLeaves?leaves:undefined;
   gardenLeaves=leaves;
   const count=Math.ceil(leaves/DAYS_PER_PLANT);
   const plots=[];
@@ -288,6 +313,7 @@ function drawPlots(leaves){
   $('gardenPlots').innerHTML=plots.join('');
   $('nextPlot').hidden=leaves%DAYS_PER_PLANT!==0;
   $('nextPlotTitle').textContent=`Plot ${count+1}`;
+  animateEarnedGrowth();
 }
 
 function renderRewards(){

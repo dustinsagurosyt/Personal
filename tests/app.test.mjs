@@ -172,3 +172,17 @@ test('the year picker and calendar navigation start in 2025',()=>{
   assert.equal(h.el('monthTitle').textContent,'January');
   assert.equal(h.el('year').value,2025);
 });
+
+test('current streak spans months and carries through an unfinished today',()=>{
+  const done={gratitudeDone:true,gratitudeText:'A small moment',minutes:20};
+  const days={'2026-10-30':done,'2026-10-31':done,'2026-11-01':done};
+  const stored={'attention-reset-v1':JSON.stringify({start:'2026-10-30',days})};
+  const h=harness(stored,undefined,'2026-11-02T12:00:00');
+  assert.equal(h.el('currentStreak').textContent,3);
+  h.el('previousMonth').onclick();
+  assert.equal(h.el('currentStreak').textContent,3);
+  h.run("setRecord({gratitudeDone:true,gratitudeText:'Today',minutes:10},'2026-11-02')");
+  assert.equal(h.el('currentStreak').textContent,4);
+  const missed=harness(stored,undefined,'2026-11-03T12:00:00');
+  assert.equal(missed.el('currentStreak').textContent,0);
+});

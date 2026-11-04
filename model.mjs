@@ -26,6 +26,15 @@ export function practiceGoal(record = {}, key, state = {}) {
   return !!key && !!state.gratitudeSince && key < state.gratitudeSince && record?.focus === true;
 }
 export function complete(record = {}, key, state = {}) { return practiceGoal(record,key,state) && videoGoal(record); }
+export function currentStreak(state, today) {
+  let key = complete(recordFor(state,today),today,state) ? today : addDays(today,-1);
+  let count = 0;
+  while (complete(recordFor(state,key),key,state)) {
+    count++;
+    key = addDays(key,-1);
+  }
+  return count;
+}
 export function monthDates(year, month) {
   return Array.from({length:new Date(year,month+1,0).getDate()},(_,i)=>dateKey(new Date(year,month,i+1,12)));
 }

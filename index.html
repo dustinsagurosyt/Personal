@@ -21,7 +21,7 @@
     <div class="month-navigation"><button id="previousMonth" class="arrow-button" aria-label="Previous month">‹</button><div id="monthTabs" class="month-tabs" role="tablist" aria-label="Months"></div><button id="nextMonth" class="arrow-button" aria-label="Next month">›</button></div>
     <div id="calendarPanel" class="calendar-panel" role="tabpanel" aria-labelledby="monthTitle"><div class="weekdays" aria-hidden="true"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div><div id="calendar" class="calendar" aria-label="Days in this month"></div></div>
     <div class="stat-line"><div class="stats" aria-label="Statistics for this month">
-      <div class="stat" title="Longest run of completed days within this month"><span class="stat-value"><span id="bestStreak">0</span></span><span class="stat-label">Best streak</span></div>
+      <div class="stat" title="Consecutive completed days through today or yesterday"><span class="stat-value"><span id="currentStreak">0</span></span><span class="stat-label">Current streak</span></div>
       <div class="stat" title="Days with both daily goals completed"><span class="stat-value"><span id="completedDays">0</span></span><span class="stat-label">Days done</span></div>
     </div></div>
   </section>
@@ -87,6 +87,6 @@
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=25"></script>
+<script type="module" src="app.js?v=26"></script>
 </body>
 </html>

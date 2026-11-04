@@ -275,27 +275,38 @@ function showView(garden){
 $('homeTab').onclick=()=>showView(false);
 $('gardenTab').onclick=()=>showView(true);
 
-async function animateEarnedGrowth(){
-  if(pendingGrowth===undefined||$('gardenView').hidden)return;
-  const earned=pendingGrowth;
-  pendingGrowth=undefined;
-  if(!motionAllowed())return;
-  const image=document.querySelector('#gardenPlots .garden-plot:last-child img');
-  if(!image)return;
-  const index=Math.floor((earned-1)/DAYS_PER_PLANT);
+const playingPlots=new WeakSet();
+
+async function replayPlant(plot,scroll=false){
+  if(!plot||!motionAllowed()||$('gardenView').hidden||playingPlots.has(plot))return;
+  const image=plot.querySelector('img');
+  const index=Number(plot.dataset.plot);
+  const day=Number(plot.dataset.stage);
   const species=gardenSpecies[index%gardenSpecies.length];
-  const day=(earned-1)%DAYS_PER_PLANT+1;
-  const isCurrent=()=>image.isConnected&&gardenLeaves===earned&&!$('gardenView').hidden;
+  const isCurrent=()=>plot.isConnected&&!$('gardenView').hidden;
+  playingPlots.add(plot);
   try {
     const {playGrowth}=await import('./plant-motion.mjs?v=27');
     if(isCurrent()){
-      image.scrollIntoView({block:'nearest',inline:'nearest'});
+      if(scroll)plot.scrollIntoView({block:'nearest',inline:'nearest'});
       await playGrowth(image,species.asset,day,isCurrent);
     }
   } catch {
-    // The completed stage remains visible if the animation asset cannot load.
+    // The current stage remains visible if the animation cannot load.
+  } finally {
+    playingPlots.delete(plot);
   }
 }
+
+function animateEarnedGrowth(){
+  if(pendingGrowth===undefined||$('gardenView').hidden)return;
+  pendingGrowth=undefined;
+  replayPlant(document.querySelector('#gardenPlots .garden-plot:last-child'),true);
+}
+
+$('gardenPlots').onclick=event=>{
+  replayPlant(event.target.closest('.garden-plot'));
+};
 
 function drawPlots(leaves){
   if(gardenLeaves===leaves)return;
@@ -308,7 +319,7 @@ function drawPlots(leaves){
     const growth=Math.min(DAYS_PER_PLANT,leaves-index*DAYS_PER_PLANT);
     const full=growth===DAYS_PER_PLANT;
     const label=full?`Day ${(index+1)*DAYS_PER_PLANT} · Fully grown`:`${growth}/${DAYS_PER_PLANT} days grown`;
-    plots.push(`<article class="garden-plot" style="--plot-color:${species.color}"><img src="${species.asset}#day-${growth}" width="120" height="106" alt="" loading="lazy" decoding="async"><strong>${species.name}</strong><p>${label}</p></article>`);
+    plots.push(`<button type="button" class="garden-plot" data-plot="${index}" data-stage="${growth}" aria-label="Replay ${species.name}, growth stage ${growth} of ${DAYS_PER_PLANT}" style="--plot-color:${species.color}"><img src="${species.asset}#day-${growth}" width="120" height="106" alt="" loading="lazy" decoding="async"><strong>${species.name}</strong><span class="garden-stage">${label}</span></button>`);
   }
   $('gardenPlots').innerHTML=plots.join('');
   $('nextPlot').hidden=leaves%DAYS_PER_PLANT!==0;

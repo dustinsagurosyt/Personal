@@ -130,6 +130,7 @@ test('natural stages use completed days and unlock all 18 species in order',()=>
   assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-1"/);
   h.run('drawPlots(4)');
   assert.match(h.el('gardenPlots').innerHTML,/garden\/fern\.svg#day-4"/);
+  assert.match(h.el('gardenPlots').innerHTML,/<button[^>]+data-stage="4"[^>]+aria-label="Replay Fern, growth stage 4 of 15"/);
   h.run('drawPlots(91)');
   assert.match(h.el('gardenPlots').innerHTML,/garden\/little-tree\.svg#day-15"/);
   assert.match(h.el('gardenPlots').innerHTML,/garden\/tulip\.svg#day-1"/);

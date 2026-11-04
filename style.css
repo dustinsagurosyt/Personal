@@ -59,10 +59,10 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .garden-totals{display:grid;gap:2px;background:var(--sage);color:#45634b;border-radius:12px;padding:8px 10px;font-size:11px;white-space:nowrap}
 .garden-totals strong{font-size:12px}
 .garden-plots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.garden-plot{min-width:0;padding:8px;border-radius:13px;background:var(--plot-color)}
+.garden-plot{display:block;text-align:left;min-width:0;padding:8px;border-radius:13px;background:var(--plot-color)}
 .garden-plot img,.garden-plot svg{display:block;width:100%;max-width:120px;height:auto;margin:0 auto 5px}
 .garden-plot strong{display:block;overflow-wrap:anywhere;font-size:13px;color:var(--ink)}
-.garden-plot p{font-size:10px;color:#566758;line-height:1.4;margin:3px 0 0}
+.garden-plot .garden-stage{display:block;font-size:10px;color:#566758;line-height:1.4;margin:3px 0 0}
 .next-plot{display:flex;align-items:center;gap:9px;border:1px dashed #cdd9c8;border-radius:13px;background:var(--surface);padding:9px 11px;margin-top:10px;color:#344c39}
 .next-plot strong{font-size:13px}
 .gratitude-stones{margin-top:22px}

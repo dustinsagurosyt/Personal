@@ -321,12 +321,11 @@ function drawPlots(leaves){
 }
 
 function renderRewards(){
-  const {leaves,branches,entries,capsules}=rewardProgress(state,today);
+  const {leaves,entries,capsules}=rewardProgress(state,today);
   drawPlots(leaves);
   $('gardenDays').textContent=`${leaves} completed ${leaves===1?'day':'days'}`;
   const grown=Math.floor(leaves/DAYS_PER_PLANT);
   $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;
-  $('gardenCount').textContent=`${leaves} ${leaves===1?'leaf':'leaves'} · ${branches} ${branches===1?'branch':'branches'}`;
   const unlocked=capsules.length;
   const remainder=entries%5;
   $('capsuleProgress').textContent=unlocked?`${unlocked} unlocked · ${remainder}/5 entries to next`:`${entries}/5 entries to unlock a stone`;

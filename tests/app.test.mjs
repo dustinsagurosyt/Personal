@@ -72,12 +72,13 @@ test('previewing December from November 2 does not select a disabled date',()=>{
   assert.equal(november2.getAttribute('aria-pressed'),'true');
 });
 
-test('the fifth completed entry unlocks a private capsule and a fifth goal day completes a branch',()=>{
+test('the fifth completed entry unlocks a private capsule and a fifth goal day advances plant growth',()=>{
   const days=Object.fromEntries(Array.from({length:4},(_,index)=>[
     `2026-10-${25+index}`,{gratitudeDone:true,gratitudeText:`Memory ${index+1}\nAnother line`,minutes:10}
   ]));
   const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-10-25',days})});
-  assert.equal(h.el('gardenCount').textContent,'4 leaves · 0 branches');
+  assert.equal(h.el('gardenDays').textContent,'4 completed days');
+  assert.equal(h.el('gardenCount'),null);
   assert.equal(h.el('stones').children.length,0);
   h.el('openJournal').onclick();
   h.el('gratitudeText').value='My fifth entry';
@@ -96,7 +97,8 @@ test('the fifth completed entry unlocks a private capsule and a fifth goal day c
   assert.equal(h.el('capsuleReveal').hidden,true);
   h.el('minutes').value='20';
   h.el('minutes').oninput();
-  assert.equal(h.el('gardenCount').textContent,'5 leaves · 1 branch');
+  assert.equal(h.el('gardenDays').textContent,'5 completed days');
+  assert.match(h.el('gardenPlots').innerHTML,/#day-5/);
 });
 
 test('90 completed days show all six species, the next plot, and 18 stones on the Garden tab',()=>{

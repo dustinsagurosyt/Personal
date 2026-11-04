@@ -104,7 +104,7 @@ function renderTabs(animate=false){
 function renderProgress(){
   renderRewards();
   const stats=monthStats(state,viewYear,viewMonth,today);
-  $('monthTitle').textContent=MONTHS[viewMonth];$('bestStreak').textContent=stats.best;$('completedDays').textContent=stats.count;$('completionRate').textContent=stats.total?stats.rate+'%':'—';
+  $('monthTitle').textContent=MONTHS[viewMonth];$('bestStreak').textContent=stats.best;$('completedDays').textContent=stats.count;
 
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
   const dates=monthDates(viewYear,viewMonth),offset=parseDate(dates[0]).getDay();

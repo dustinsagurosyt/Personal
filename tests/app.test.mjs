@@ -52,3 +52,16 @@ test('upcoming month is visible but read-only, and the strip crosses years',()=>
   assert.equal(h.el('openJournal').disabled,true);assert.equal(h.el('minutes').disabled,true);
   h.el('today').onclick();assert.equal(h.el('monthTitle').textContent,'December');
 });
+
+test('previewing December from November 2 does not select a disabled date',()=>{
+  const h=harness({},undefined,'2026-11-02T12:00:00');
+  h.el('nextMonth').onclick();
+  const december2=h.el('calendar').children.find(day=>day.dataset.date==='2026-12-02');
+  assert.equal(december2.disabled,true);
+  assert.equal(december2.getAttribute('aria-pressed'),'false');
+  assert(!december2.className.split(' ').includes('is-selected'));
+  assert.equal(h.el('dayTitle').textContent,'December preview');
+  h.el('previousMonth').onclick();
+  const november2=h.el('calendar').children.find(day=>day.dataset.date==='2026-11-02');
+  assert.equal(november2.getAttribute('aria-pressed'),'true');
+});

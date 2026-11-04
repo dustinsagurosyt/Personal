@@ -97,8 +97,10 @@ function renderProgress(){
     const record=recordFor(state,key),done=complete(record,key,state),partial=!done&&(practiceGoal(record,key,state)||videoGoal(record));
     const button=document.createElement('button');button.type='button';button.textContent=Number(key.slice(8));button.className='calendar-day';
     if(key<today)button.classList.add('is-past');if(partial)button.classList.add('is-partial');if(done)button.classList.add('is-complete');if(key===today){button.classList.add('is-today');button.setAttribute('aria-current','date')}
-    if(key===selected)button.classList.add('is-selected');
-    button.disabled=key>today;button.setAttribute('aria-pressed',String(key===selected));
+    button.disabled=key>today;
+    const isSelected=!button.disabled&&key===selected;
+    if(isSelected)button.classList.add('is-selected');
+    button.setAttribute('aria-pressed',String(isSelected));
     const count=(practiceGoal(record,key,state)?1:0)+(videoGoal(record)?1:0);
     button.setAttribute('aria-label',`${longDate(key)}${key===today?', today':''}: ${count} of 2 goals${key>today?', upcoming':''}`);button.title=button.getAttribute('aria-label');button.dataset.date=key;button.onclick=()=>selectDay(key);
     button.onkeydown=event=>{const amount={ArrowLeft:-1,ArrowRight:1,ArrowUp:-7,ArrowDown:7}[event.key];if(!amount)return;event.preventDefault();const date=parseDate(key);date.setDate(date.getDate()+amount);const next=dateKey(date);if(next>today||date.getFullYear()<firstYear())return;selectDay(next);requestAnimationFrame(()=>document.querySelector(`[data-date="${next}"]`)?.focus())};grid.append(button);
@@ -118,7 +120,7 @@ function renderDailyStatus(){
 }
 function renderDay(){
   const record=currentRecord();
-  $('dayTitle').textContent=selected===today?'Today, '+parseDate(selected).toLocaleDateString(undefined,{month:'short',day:'numeric'}):parseDate(selected).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+  $('dayTitle').textContent=isFuture()?`${MONTHS[viewMonth]} preview`:selected===today?'Today, '+parseDate(selected).toLocaleDateString(undefined,{month:'short',day:'numeric'}):parseDate(selected).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 
   $('gratitudeDone').checked=practiceGoal(record,selected,state);$('minutes').value=record.minutes??'';
   for(const id of ['gratitudeDone','minutes','openJournal','restart'])$(id).disabled=isFuture();$('futureMessage').hidden=!isFuture();

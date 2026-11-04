@@ -255,17 +255,19 @@ let pendingGrowth;
 let memoryDates=[];
 let memoryDrawing=false;
 
-function showView(garden){
-  $('homeView').hidden=garden;
-  $('gardenView').hidden=!garden;
-  $('today').hidden=garden;
-  $('homeTab').setAttribute('aria-pressed',String(!garden));
-  $('gardenTab').setAttribute('aria-pressed',String(garden));
+function showView(view){
+  for(const tab of ['home','garden','memories']){
+    const active=tab===view;
+    $(tab+'View').hidden=!active;
+    $(tab+'Tab').setAttribute('aria-pressed',String(active));
+  }
+  $('today').hidden=view!=='home';
   window.scrollTo(0,0);
-  if(garden)animateEarnedGrowth();
+  if(view==='garden')animateEarnedGrowth();
 }
-$('homeTab').onclick=()=>showView(false);
-$('gardenTab').onclick=()=>showView(true);
+for(const tab of ['home','garden','memories']){
+  $(tab+'Tab').onclick=()=>showView(tab);
+}
 
 const playingPlots=new WeakSet();
 
@@ -367,7 +369,7 @@ $('drawMemory').onclick=()=>{
   };
   if(motionAllowed()){
     stage.classList.add('is-pouring');
-    setTimeout(reveal,900);
+    setTimeout(reveal,1840);
   }else reveal();
 };
 

@@ -14,6 +14,7 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
   }
   for(const match of html.matchAll(/\bid="([^"]+)"/g))roots.set(match[1],new Element(match[1]));
   roots.get('gardenView').hidden=true;
+  roots.get('memoriesView').hidden=true;
   roots.get('memoryQuote').hidden=true;
   const find=(id)=>{if(roots.has(id))return roots.get(id);const visit=el=>{if(el.id===id)return el;for(const c of el.children){const r=visit(c);if(r)return r}};for(const root of roots.values()){const r=visit(root);if(r)return r}return null};
   const storage=new Map(Object.entries(initial));if(timer)storage.set('attention-reset-gratitude-timer-v1',JSON.stringify(timer));
@@ -80,7 +81,11 @@ test('the Memory Jar draws full dated entries from all saved writing, and goal d
   const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-10-28',days})});
   assert.equal(h.el('gardenDays').textContent,'1 completed day');
   assert.equal(h.el('memoryQuote').hidden,true);
-  h.el('gardenTab').onclick();
+  h.el('memoriesTab').onclick();
+  assert.equal(h.el('memoriesView').hidden,false);
+  assert.equal(h.el('homeView').hidden,true);
+  assert.equal(h.el('gardenView').hidden,true);
+  assert.equal(h.el('memoriesTab').getAttribute('aria-pressed'),'true');
   h.run('Math.random=()=>0.99');
   h.el('drawMemory').onclick();
   assert.equal(h.el('memoryDate').getAttribute('datetime'),'2026-11-01');
@@ -92,6 +97,10 @@ test('the Memory Jar draws full dated entries from all saved writing, and goal d
   assert.equal(h.el('memoryDate').getAttribute('datetime'),'2026-10-28');
   assert.equal(h.el('memoryQuote').textContent,'First entry');
   assert.equal(harness().el('drawMemory').disabled,true);
+  h.el('gardenTab').onclick();
+  assert.equal(h.el('memoriesView').hidden,true);
+  assert.equal(h.el('gardenView').hidden,false);
+  assert.equal(h.el('memoriesTab').getAttribute('aria-pressed'),'false');
 });
 
 test('90 completed days show all six species, the next plot, and the Memory Jar on the Garden tab',()=>{

@@ -103,3 +103,10 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 #shopView .ready .state,#shopView .next .state{color:#385d43}
 #shopView .next .state{font-weight:600}
 #shopView details p{margin:1px 9px 8px 62px;font-size:12px}
+
+#shopView .shop-back{color:var(--forest)}
+#shopView .shop-catalog{display:grid;gap:6px;list-style:none;margin:8px 0 16px;padding:0}
+#shopView .shop-catalog li{padding:9px 11px;border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+#shopView .shop-catalog li div{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13px}
+#shopView .shop-catalog li span{flex:none;color:var(--forest);font-size:11px}
+#shopView .shop-catalog li p{margin:3px 0 0;color:var(--muted);font-size:12px}

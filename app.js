@@ -299,6 +299,7 @@ function showView(view){
   $('today').hidden=view!=='home';
   window.scrollTo(0,0);
   if(view==='garden')animateEarnedGrowth();
+  if(view==='shop')closeShopCategory();
 }
 for(const tab of appTabs){
   $(tab+'Tab').onclick=()=>showView(tab);
@@ -365,11 +366,85 @@ const shopMilestones = [
   {day:31, title:"Water Features"},
   {day:45, title:"Structures & Displays"}
 ];
+const shopCatalogs = [
+  [
+    ["Pot Studio","3 pebbles","Terracotta, sage ceramic, and speckled stone pots."]
+  ],
+  [
+    ["Ladybug","10 pebbles","Crawls between plants and opens its wings when tapped."],
+    ["Bumblebee","15 pebbles","Visits flowers and loops when tapped. In a garden without blooms, it rests on a pot rim."],
+    ["Pill Bug","20 pebbles","Explores the soil around pots and rolls into a ball when tapped."],
+    ["Snail","25 pebbles","Leaves a faint trail as it explores, then peeks out of its shell when tapped."],
+    ["Sparrow","30 pebbles","Hops between pot rims in the morning and tilts its head when tapped."],
+    ["Garden Gecko","40 pebbles","Basks on a warm stone and scurries to a nearby pot when tapped."],
+    ["Cottontail Rabbit","45 pebbles","Hops along the garden edge, sniffs plants, and twitches its ears when tapped."],
+    ["Sleepy Cat","55 pebbles","Naps in a sunny spot beside a pot and stretches when tapped."]
+  ],
+  [
+    ["Firefly Lantern","15 pebbles","Warm dusk lighting with drifting fireflies."],
+    ["String Lights","Price TBD","Drape warm bulbs between pots or across a trellis."],
+    ["Moon Lamps","Price TBD","Place small lamps that cast a cool glow."],
+    ["Candle Path","Price TBD","Line the edge of your path with softly flickering candles."]
+  ],
+  [
+    ["Stepping-Stone Path","6 pebbles","A customizable path between garden plots."]
+  ],
+  [
+    ["Seasonal Skins","35 pebbles","Switch between spring blossoms, autumn leaves, and snow."],
+    ["Rainy Morning","Price TBD","Soft rain and a misty garden palette."],
+    ["Desert Garden","Price TBD","Warm sand tones and a dry garden backdrop."],
+    ["Moonlit Garden","Price TBD","Cool nighttime colors and a soft moon glow."]
+  ],
+  [
+    ["Garden Pond","20 pebbles","Lily pads and water that ripples when tapped."],
+    ["Birdbath","Price TBD","Add a shallow basin with ripples when a bird lands."],
+    ["Stone Fountain","Price TBD","Water trickles over stacked stones."],
+    ["Mini Creek","Price TBD","A narrow stream winds between garden plots."]
+  ],
+  [
+    ["Glass Greenhouse","50 pebbles","Display favorite mature plants and replay their growth."],
+    ["Plant Shelf","Price TBD","Arrange favorite pots on a tiered shelf."],
+    ["Climbing Trellis","Price TBD","Give vines a decorative frame."],
+    ["Garden Arch","Price TBD","Frame the entrance with a flowering arch."]
+  ]
+];
 let shopCompletedDays;
+let openShopIndex;
+
+function closeShopCategory(returnFocus=false){
+  const previous=openShopIndex;
+  openShopIndex=undefined;
+  $('shopCategory').hidden=true;
+  $('shopOverview').hidden=false;
+  if(returnFocus&&previous!==undefined)$('shopSummary'+previous).focus();
+}
+
+function openShopCategory(index){
+  const {title}=shopMilestones[index];
+  openShopIndex=index;
+  $('shopCategoryTitle').textContent=title;
+  $('shopCatalog').innerHTML=shopCatalogs[index].map(([name,price,description])=>
+    `<li><div><strong>${name}</strong><span>${price}</span></div><p>${description}</p></li>`
+  ).join('');
+  $('shopOverview').hidden=true;
+  $('shopCategory').hidden=false;
+  window.scrollTo(0,0);
+  $('shopCategoryTitle').focus({preventScroll:true});
+}
+
+$('shopBack').onclick=()=>closeShopCategory(true);
+shopMilestones.forEach(({day},index)=>{
+  $('shopSummary'+index).onclick=event=>{
+    if(shopCompletedDays<day)return;
+    event.preventDefault();
+    openShopCategory(index);
+  };
+});
 
 function renderShop(completedDays){
   if(shopCompletedDays===completedDays)return;
   shopCompletedDays=completedDays;
+  if(openShopIndex!==undefined&&completedDays<shopMilestones[openShopIndex].day)closeShopCategory();
   const next=shopMilestones.findIndex(({day})=>day>completedDays);
   const milestone=shopMilestones[next]??shopMilestones.at(-1);
   const progress=$('shopUnlockProgress');

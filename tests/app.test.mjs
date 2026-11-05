@@ -225,3 +225,23 @@ test('Shop milestones use completed days and show the correct next category',()=
   assert.equal(h.el('shopNextUnlock').textContent,'All categories unlocked');
   assert.equal(h.el('shopRungStatus6').textContent,'Unlocked');
 });
+
+test('only unlocked Shop rows open their own titled category screen',()=>{
+  const h=harness();
+  h.el('shopTab').onclick();
+  const tap=index=>{let opened=false;h.el('shopSummary'+index).onclick({preventDefault(){opened=true}});return opened;};
+  assert.equal(tap(0),false);
+  assert.equal(h.el('shopCategory').hidden,true);
+  h.run('renderShop(7)');
+  assert.equal(tap(1),true);
+  assert.equal(h.el('shopCategoryTitle').textContent,'Companion Shop');
+  assert.match(h.el('shopCatalog').innerHTML,/Ladybug/);
+  assert.equal(h.el('shopOverview').hidden,true);
+  h.el('shopBack').onclick();
+  assert.equal(h.el('shopOverview').hidden,false);
+  assert.equal(tap(2),false);
+  assert.equal(tap(0),true);
+  assert.equal(h.el('shopCategoryTitle').textContent,'Pot Studio');
+  h.run('renderShop(2)');
+  assert.equal(h.el('shopCategory').hidden,true);
+});

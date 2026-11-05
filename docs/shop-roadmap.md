@@ -105,7 +105,7 @@ These files preserve the design previews. The earlier five-layout gallery uses t
 
 ## Live foundation and suggested build order
 
-The live app has Home, Garden, and Shop tabs. It awards 1 pebble per completed day and 2 extra every fifth consecutive completed day. The illustrated Shop ladder and completed-day category status are live. The purchasable catalogs, spending, ownership, and pet unlocks are planned.
+The live app has Home, Garden, and Shop tabs. It awards 1 pebble per completed day and 2 extra every fifth consecutive completed day. The illustrated Shop ladder and completed-day category status are live. Unlocked categories open their own titled catalog screens with planned prices. Spending, ownership, and pet unlocks are planned.
 
 1. Track spending and ownership.
 2. Implement Pot Studio purchases and equipping.

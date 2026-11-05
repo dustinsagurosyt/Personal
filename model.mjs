@@ -35,7 +35,8 @@ export function currentStreak(state, today) {
   }
   return count;
 }
-const STREAK_PEBBLES = {3:1, 5:2, 7:3};
+const PEBBLE_BONUS_INTERVAL = 5;
+const PEBBLE_STREAK_BONUS = 2;
 
 export function pebbleBalance(state, today) {
   const completed = Object.keys(state.days)
@@ -44,7 +45,8 @@ export function pebbleBalance(state, today) {
   let balance=0, run=0, previous;
   for(const key of completed){
     run=previous&&addDays(previous,1)===key?run+1:1;
-    balance+=STREAK_PEBBLES[run]??0;
+    balance+=1;
+    if(run%PEBBLE_BONUS_INTERVAL===0)balance+=PEBBLE_STREAK_BONUS;
     previous=key;
   }
   return balance;

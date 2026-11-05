@@ -28,11 +28,15 @@ test('rewards span months and group distinct completed entries into capsules',()
   assert.deepEqual(rewardProgress({days},'2026-11-03'),{leaves:5,branches:1,entries:10,capsules:[dates[0],dates[5]]});
 });
 
-test('pebbles accumulate at 3, 5 and 7 days per streak across month boundaries',()=>{
+test('daily pebbles and five-day streak bonuses cross months and restart after a gap',()=>{
   const day={gratitudeDone:true,gratitudeText:'A good moment',minutes:20};
-  const dates=['2026-10-29','2026-10-30','2026-10-31','2026-11-01','2026-11-02','2026-11-03','2026-11-04','2026-11-05','2026-11-07','2026-11-08','2026-11-09'];
-  const state=normalizeState({days:Object.fromEntries(dates.map(key=>[key,day]))},'2026-11-09');
-  for(const [date,balance] of [['2026-10-30',0],['2026-10-31',1],['2026-11-02',3],['2026-11-04',6],['2026-11-05',6],['2026-11-06',6],['2026-11-09',7]]){
-    assert.equal(pebbleBalance(state,date),balance);
+  const dates=['2026-10-30','2026-10-31',...Array.from({length:16},(_,i)=>'2026-11-'+String(i+1).padStart(2,'0')).filter(key=>key!=='2026-11-05')];
+  const state=normalizeState({days:Object.fromEntries(dates.map(key=>[key,day]))},'2026-11-16');
+  for(const [date,balance] of [
+    ['2026-10-29',0],['2026-10-30',1],['2026-11-02',4],['2026-11-03',7],
+    ['2026-11-04',8],['2026-11-05',8],['2026-11-09',12],['2026-11-10',15],
+    ['2026-11-14',19],['2026-11-15',22],['2026-11-16',23]
+  ]){
+    assert.equal(pebbleBalance(state,date),balance,date);
   }
 });

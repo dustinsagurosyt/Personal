@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=35';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=42';
 import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);

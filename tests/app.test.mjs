@@ -14,6 +14,7 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
   }
   for(const match of html.matchAll(/\bid="([^"]+)"/g))roots.set(match[1],new Element(match[1]));
   roots.get('gardenView').hidden=true;
+  roots.get('pebblePanel').hidden=true;
   const find=(id)=>{if(roots.has(id))return roots.get(id);const visit=el=>{if(el.id===id)return el;for(const c of el.children){const r=visit(c);if(r)return r}};for(const root of roots.values()){const r=visit(root);if(r)return r}return null};
   const storage=new Map(Object.entries(initial));if(timer)storage.set('attention-reset-gratitude-timer-v1',JSON.stringify(timer));
   const intervals=[];const NativeDate=Date;class Clock extends NativeDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
@@ -167,4 +168,23 @@ test('earned growth queues only when the completed-day count increases',()=>{
   assert.equal(h.run('pendingGrowth'),5);
   h.run('drawPlots(4)');
   assert.equal(h.run('pendingGrowth'),undefined);
+});
+
+test('the shared pebble popover shows progress toward the next bonus',()=>{
+  const done={gratitudeDone:true,gratitudeText:'A small moment',minutes:10};
+  const days=Object.fromEntries(['2026-11-01','2026-11-02','2026-11-03'].map(key=>[key,done]));
+  const h=harness({'attention-reset-v1':JSON.stringify({days})});
+  assert.equal(h.el('pebblePanel').hidden,true);
+  h.el('pebbleToggle').onclick();
+  assert.equal(h.el('pebblePanel').hidden,false);
+  assert.equal(h.el('pebbleToggle').getAttribute('aria-expanded'),'true');
+  assert.equal(h.el('pebbleStreak').textContent,'3-day streak');
+  assert.equal(h.el('pebbleCountdown').textContent,'2 more days in a row');
+  assert.equal(h.el('pebbleDots').getAttribute('aria-label'),'3 of 5 days toward the next bonus');
+  h.el('gardenTab').onclick();
+  assert.equal(h.el('pebblePanel').hidden,true);
+  h.el('pebbleToggle').onclick();
+  assert.equal(h.el('pebblePanel').hidden,false);
+  h.run('renderPebbleProgress(5)');
+  assert.equal(h.el('pebbleCountdown').textContent,'5 more days in a row');
 });

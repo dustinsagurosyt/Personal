@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=42';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, PEBBLE_BONUS_INTERVAL, PEBBLE_STREAK_BONUS, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress } from './model.mjs?v=43';
 import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);
@@ -104,9 +104,21 @@ function renderTabs(animate=false){
 function renderProgress(){
   renderRewards();
   const stats=monthStats(state,viewYear,viewMonth,today);
-  $('monthTitle').textContent=MONTHS[viewMonth];$('currentStreak').textContent=currentStreak(state,today);$('completedDays').textContent=stats.count;
+  const streak=currentStreak(state,today);
+  $('monthTitle').textContent=MONTHS[viewMonth];$('currentStreak').textContent=streak;$('completedDays').textContent=stats.count;
+  renderPebbleProgress(streak);
+}
+
+function renderPebbleProgress(streak){
   const pebbles=pebbleBalance(state,today);
   $('pebbleBalance').textContent=`${pebbles} ${pebbles===1?'pebble':'pebbles'}`;
+  const progress=streak%PEBBLE_BONUS_INTERVAL;
+  const remaining=PEBBLE_BONUS_INTERVAL-progress;
+  $('pebbleStreak').textContent=`${streak}-day streak`;
+  $('pebbleBonus').textContent=`+${PEBBLE_STREAK_BONUS} pebbles`;
+  $('pebbleCountdown').textContent=`${remaining} more ${remaining===1?'day':'days'} in a row`;
+  $('pebbleDots').setAttribute('aria-label',`${progress} of ${PEBBLE_BONUS_INTERVAL} days toward the next bonus`);
+  $('pebbleDots').innerHTML='<span class="filled"></span>'.repeat(progress)+'<span></span>'.repeat(remaining);
 
   const grid=$('calendar');grid.replaceChildren();grid.setAttribute('aria-label',MONTHS[viewMonth]+' '+viewYear);
   const dates=monthDates(viewYear,viewMonth),offset=parseDate(dates[0]).getDay();
@@ -255,7 +267,24 @@ const DAYS_PER_PLANT=15;
 let gardenLeaves;
 let pendingGrowth;
 
+function setPebblePanel(open){
+  $('pebblePanel').hidden=!open;
+  $('pebbleToggle').setAttribute('aria-expanded',String(open));
+}
+
+$('pebbleToggle').onclick=()=>setPebblePanel($('pebblePanel').hidden);
+document.addEventListener('click',event=>{
+  if(!$('pebblePanel').hidden&&!$('pebbleToggle').contains(event.target)&&!$('pebblePanel').contains(event.target))setPebblePanel(false);
+});
+document.addEventListener('keydown',event=>{
+  if(event.key==='Escape'&&!$('pebblePanel').hidden){
+    setPebblePanel(false);
+    $('pebbleToggle').focus();
+  }
+});
+
 function showView(view){
+  setPebblePanel(false);
   for(const tab of ['home','garden']){
     const active=tab===view;
     $(tab+'View').hidden=!active;

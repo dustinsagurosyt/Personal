@@ -35,8 +35,8 @@ export function currentStreak(state, today) {
   }
   return count;
 }
-const PEBBLE_BONUS_INTERVAL = 5;
-const PEBBLE_STREAK_BONUS = 2;
+export const PEBBLE_BONUS_INTERVAL = 5;
+export const PEBBLE_STREAK_BONUS = 2;
 
 export function pebbleBalance(state, today) {
   const completed = Object.keys(state.days)

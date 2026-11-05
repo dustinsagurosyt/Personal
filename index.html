@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=41">
+  <link rel="stylesheet" href="style.css?v=43">
 </head>
 <body>
 <main>
@@ -17,8 +17,13 @@
     <a class="brand" href="./" aria-label="Attention Reset home"><span class="brand-mark" aria-hidden="true">◉</span> Attention Reset</a>
     <div class="header-actions">
       <button id="today" class="text-button">Today <span aria-hidden="true">↗</span></button>
-      <div class="pebble-balance" title="Earn 1 pebble per completed day and 2 extra every 5 consecutive completed days">
+      <button type="button" id="pebbleToggle" class="pebble-balance" aria-expanded="false" aria-controls="pebblePanel">
         <span id="pebbleBalance">0 pebbles</span>
+      </button>
+      <div id="pebblePanel" class="pebble-panel" hidden>
+        <div class="pebble-panel-heading"><strong id="pebbleStreak">0-day streak</strong><span id="pebbleBonus"></span></div>
+        <div id="pebbleDots" class="pebble-dots" role="img"></div>
+        <p id="pebbleCountdown"></p>
       </div>
     </div>
   </header>
@@ -91,6 +96,6 @@
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=42"></script>
+<script type="module" src="app.js?v=43"></script>
 </body>
 </html>

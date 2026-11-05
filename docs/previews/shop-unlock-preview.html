@@ -1,0 +1,79 @@
+<div class="viz-dotted-background">
+<section id="shop-unlocks-preview" aria-label="Attention Reset Shop unlocks preview">
+<header><span class="brand"><i aria-hidden="true">◉</i> Attention Reset</span><span class="balance">7 pebbles</span></header>
+<h2>Shop</h2>
+<div class="next-card">
+  <div class="next-heading"><span>Next unlock</span><span data-count>5 of 7 days</span></div>
+  <strong data-next>Companion Shop</strong>
+  <progress max="7" value="5" aria-label="Completed days toward the next shop unlock"></progress>
+</div>
+<ol class="ladder"><li class="ready"><details data-day="3"><summary><span class="marker" aria-hidden="true"></span><strong>Pot Studio</strong><span class="state">Unlocked</span></summary><p>Terracotta, sage ceramic, and speckled stone pots. Pot Studio costs 3 pebbles.</p></details></li>
+<li class="next"><details data-day="7"><summary><span class="marker" aria-hidden="true"></span><strong>Companion Shop</strong><span class="state">Up next</span></summary><p>Preview pets and buy your favorite with pebbles.</p></details></li>
+<li class="locked"><details data-day="12"><summary><span class="marker" aria-hidden="true"></span><strong>Lighting &amp; Ambience</strong><span class="state">12 days</span></summary><p>Firefly Lantern, String Lights, Moon Lamps, and Candle Path.</p></details></li>
+<li class="locked"><details data-day="16"><summary><span class="marker" aria-hidden="true"></span><strong>Paths &amp; Layout</strong><span class="state">16 days</span></summary><p>Connect your first two plots with the Stepping-Stone Path.</p></details></li>
+<li class="locked"><details data-day="23"><summary><span class="marker" aria-hidden="true"></span><strong>Garden Themes</strong><span class="state">23 days</span></summary><p>Seasonal Skins, Rainy Morning, Desert Garden, and Moonlit Garden.</p></details></li>
+<li class="locked"><details data-day="31"><summary><span class="marker" aria-hidden="true"></span><strong>Water Features</strong><span class="state">31 days</span></summary><p>Garden Pond, Birdbath, Stone Fountain, and Mini Creek.</p></details></li>
+<li class="locked"><details data-day="45"><summary><span class="marker" aria-hidden="true"></span><strong>Structures &amp; Displays</strong><span class="state">45 days</span></summary><p>Glass Greenhouse, Plant Shelf, Climbing Trellis, and Garden Arch.</p></details></li></ol>
+<div class="dock" aria-label="Shop selected"><span>Home</span><span>Garden</span><strong>Shop</strong></div>
+</section>
+<div class="shop-preview-control"><label for="shop-sample-days">Preview completed days</label><output id="shop-sample-value" for="shop-sample-days">5</output><input id="shop-sample-days" type="range" min="0" max="45" value="5"></div>
+</div>
+<style>
+#shop-unlocks-preview{box-sizing:border-box;max-width:390px;margin:auto;padding:18px 16px 14px;border-radius:18px;background:#f5f4ed;color:#283b2e;font:14px/1.4 -apple-system,BlinkMacSystemFont,sans-serif}
+#shop-unlocks-preview *{box-sizing:border-box}
+#shop-unlocks-preview header,#shop-unlocks-preview .brand,#shop-unlocks-preview .next-heading{display:flex;align-items:center;gap:7px}
+#shop-unlocks-preview header,#shop-unlocks-preview .next-heading{justify-content:space-between}
+#shop-unlocks-preview .brand{font-size:13px;font-weight:600}
+#shop-unlocks-preview .brand i{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:#243e2c;color:#fffef8;font-size:18px;font-style:normal}
+#shop-unlocks-preview .balance{font-size:12px;font-weight:600;padding:5px 9px;border-radius:999px;background:#e3eddd;white-space:nowrap}
+#shop-unlocks-preview h2{margin:24px 0 10px;font-size:22px;font-weight:600;letter-spacing:-.5px}
+#shop-unlocks-preview .next-card{padding:10px 12px;border-radius:11px;background:#e3eddd}
+#shop-unlocks-preview .next-heading{font-size:11px;color:#566651;margin-bottom:4px}
+#shop-unlocks-preview .next-card strong{font-size:14px;font-weight:600}
+#shop-unlocks-preview progress{display:block;width:100%;height:7px;margin:9px 0 1px;appearance:none;border:0;border-radius:6px;background:#cddbc5;overflow:hidden;accent-color:#698f63}
+#shop-unlocks-preview progress::-webkit-progress-bar{background:#cddbc5}
+#shop-unlocks-preview progress::-webkit-progress-value{background:#698f63;border-radius:6px}
+#shop-unlocks-preview progress::-moz-progress-bar{background:#698f63;border-radius:6px}
+#shop-unlocks-preview .ladder{position:relative;margin:12px 0 16px;padding:0;list-style:none}
+#shop-unlocks-preview .ladder::before{content:"";position:absolute;left:6px;top:22px;bottom:22px;width:1px;background:#cbd5c2}
+#shop-unlocks-preview summary{display:grid;grid-template-columns:13px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:44px;list-style:none}
+#shop-unlocks-preview summary::-webkit-details-marker{display:none}
+#shop-unlocks-preview .marker{z-index:1;width:13px;height:13px;border-radius:50%;border:1px solid #95a68d;background:#f5f4ed}
+#shop-unlocks-preview .ready .marker{background:#698f63;border-color:#698f63}
+#shop-unlocks-preview .next .marker{border:2px solid #698f63}
+#shop-unlocks-preview summary strong{font-size:13px;font-weight:600}
+#shop-unlocks-preview .locked summary strong,#shop-unlocks-preview .state{color:#566651}
+#shop-unlocks-preview .state{font-size:11px;white-space:nowrap}
+#shop-unlocks-preview .ready .state{color:#385d43;background:#e3eddd;padding:3px 7px;border-radius:999px}
+#shop-unlocks-preview details p{margin:0 0 6px 22px;color:#566651;font-size:12px}
+#shop-unlocks-preview .dock{width:min(100%,280px);display:flex;gap:4px;margin:auto;padding:4px;border-radius:999px;background:#243e2c;color:#fffef8;font-size:12px;text-align:center}
+#shop-unlocks-preview .dock>*{flex:1;padding:8px 2px}
+#shop-unlocks-preview .dock strong{background:#516b45;border-radius:999px}
+.shop-preview-control{box-sizing:border-box;max-width:390px;margin:10px auto 0;display:grid;grid-template-columns:1fr auto;align-items:center;gap:4px 10px;color:var(--foreground);font-size:13px}
+.shop-preview-control input{grid-column:1/-1;width:100%;min-height:34px;accent-color:#698f63}
+</style>
+<script>
+(() => {
+ const root=document.getElementById('shop-unlocks-preview');
+ const slider=document.getElementById('shop-sample-days');
+ const output=document.getElementById('shop-sample-value');
+ const rows=[...root.querySelectorAll('[data-day]')];
+ const progress=root.querySelector('progress');
+ slider.addEventListener('input',()=>{
+  const days=Number(slider.value);
+  const next=rows.find(row=>Number(row.dataset.day)>days);
+  output.textContent=days;
+  const pebbles=days+2*Math.floor(days/5);
+  root.querySelector('.balance').textContent=pebbles+(pebbles===1?' pebble':' pebbles');
+  root.querySelector('[data-next]').textContent=next?next.querySelector('summary strong').textContent:'All categories unlocked';
+  root.querySelector('[data-count]').textContent=next?days+' of '+next.dataset.day+' days':days+' days';
+  progress.max=next?Number(next.dataset.day):45;
+  progress.value=days;
+  for(const row of rows){
+   const unlocked=days>=Number(row.dataset.day);
+   row.parentElement.className=unlocked?'ready':row===next?'next':'locked';
+   row.querySelector('.state').textContent=unlocked?'Unlocked':row===next?'Up next':row.dataset.day+' days';
+  }
+ });
+})();
+</script>

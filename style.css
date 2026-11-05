@@ -78,47 +78,28 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 @media(prefers-reduced-motion:reduce){.pebble-panel{transition:none}}
 
 /* Illustrated Shop unlock ladder */
-#shopView .next-card{padding:10px 12px;border-radius:11px;background:#e3eddd}
-#shopView .next-heading{font-size:11px;color:#566651;margin-bottom:4px}
-#shopView .next-card strong{font-size:14px;font-weight:600}
-#shopView progress{display:block;width:100%;height:7px;margin:9px 0 1px;appearance:none;border:0;border-radius:6px;background:#cddbc5;overflow:hidden;accent-color:#698f63}
-#shopView progress::-webkit-progress-bar{background:#cddbc5}
-#shopView progress::-webkit-progress-value{background:#698f63;border-radius:6px}
-#shopView progress::-moz-progress-bar{background:#698f63;border-radius:6px}
-#shopView .ladder{position:relative;margin:12px 0 16px;padding:0;list-style:none}
-#shopView .ladder::before{content:"";position:absolute;left:6px;top:22px;bottom:22px;width:1px;background:#cbd5c2}
-#shopView summary{display:grid;grid-template-columns:13px minmax(0,1fr) auto;align-items:center;gap:9px;min-height:44px;list-style:none}
-#shopView summary::-webkit-details-marker{display:none}
-#shopView .marker{z-index:1;width:13px;height:13px;border-radius:50%;border:1px solid #95a68d;background:#f5f4ed}
-#shopView .ready .marker{background:#698f63;border-color:#698f63}
-#shopView .next .marker{border:2px solid #698f63}
-#shopView summary strong{font-size:13px;font-weight:600}
-#shopView .locked summary strong,#shopView .state{color:#566651}
-#shopView .state{font-size:11px;white-space:nowrap}
-#shopView .ready .state{color:#385d43;background:#e3eddd;padding:3px 7px;border-radius:999px}
-#shopView details p{margin:0 0 6px 22px;color:#566651;font-size:12px}
-#shopView .next-card{position:relative;isolation:isolate;min-height:117px;padding:13px 82px 13px 13px;overflow:hidden;background:#243e2c;color:#fffef8}
-#shopView .next-heading{color:#d6e4d2;justify-content:flex-start;flex-wrap:wrap;gap:5px 10px}
-#shopView .next-card strong{display:block;line-height:1.25;font-size:18px;margin-top:5px}
-#shopView .milestone-art{position:absolute;right:-4px;bottom:-10px;width:99px;height:99px;display:grid;place-items:center;border:1px solid #ffffff2c;border-radius:50%;background:#ffffff0e}
-#shopView .milestone-art svg{width:78px;height:auto;margin-right:4px;margin-bottom:6px}
-#shopView progress{width:min(100%,200px);background:#4d6851;height:6px}
+#shopView .next-card{position:relative;isolation:isolate;min-height:117px;margin-top:8px;padding:13px 104px 13px 13px;border-radius:11px;overflow:hidden;background:var(--forest);color:var(--surface)}
+#shopView .next-heading{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 10px;color:#d6e4d2;font-size:11px}
+#shopView #shopUnlockCount{white-space:nowrap}
+#shopView .next-card strong{display:block;margin-top:5px;font-size:18px;line-height:1.25;font-weight:600;overflow-wrap:anywhere}
+#shopView .milestone-art{position:absolute;right:-4px;bottom:-10px;width:99px;height:99px;display:grid;place-items:center;border:1px solid #ffffff2c;border-radius:50%;background:#ffffff0e;pointer-events:none}
+#shopView .milestone-art svg{width:81px;height:auto;margin:0 4px 6px 0}
+#shopView progress{display:block;width:min(100%,200px);height:6px;margin:9px 0 1px;appearance:none;border:0;border-radius:6px;background:#4d6851;overflow:hidden;accent-color:#aec6a7}
 #shopView progress::-webkit-progress-bar{background:#4d6851}
-#shopView progress::-webkit-progress-value{background:#aec6a7}
-#shopView progress::-moz-progress-bar{background:#aec6a7}
-#shopView .ladder{display:grid;gap:5px}
-#shopView .ladder::before{content:none}
-#shopView .ladder li{border:1px solid #dbe3d4;border-radius:11px;background:#fffef8}
-#shopView .ladder .next{border-color:#90ab87;background:#edf2e8}
-#shopView summary{grid-template-columns:38px minmax(0,1fr) auto;min-height:45px;padding:4px 7px;gap:8px}
-#shopView .marker,#shopView .ready .marker,#shopView .next .marker{width:38px;height:34px;display:grid;place-items:center;border:0;border-radius:7px;background:var(--tile)}
-#shopView .marker svg{width:33px;height:auto}
-#shopView .ready .state{background:transparent;padding:0}
-#shopView .next .state{font-weight:600;color:#385d43}
-#shopView details p{margin:1px 9px 8px 54px}
-#shopView summary{grid-template-columns:46px minmax(0,1fr) auto;min-height:52px}
-#shopView .marker,#shopView .ready .marker,#shopView .next .marker{width:46px;height:42px;border-radius:9px}
-#shopView .marker svg{width:43px}
-#shopView .milestone-art svg{width:81px}
-#shopView details p{margin-left:62px}
-#shopView .next-card{margin-top:8px}
+#shopView progress::-webkit-progress-value{background:#aec6a7;border-radius:6px}
+#shopView progress::-moz-progress-bar{background:#aec6a7;border-radius:6px}
+#shopView .ladder{display:grid;gap:5px;margin:12px 0 16px;padding:0;list-style:none}
+#shopView .ladder li{border:1px solid var(--line);border-radius:11px;background:var(--surface)}
+#shopView .ladder .next{border-color:#90ab87;background:var(--soft)}
+#shopView summary{display:grid;grid-template-columns:46px minmax(0,1fr) auto 6px;align-items:center;gap:8px;min-height:52px;padding:4px 9px 4px 7px;list-style:none}
+#shopView summary::-webkit-details-marker{display:none}
+#shopView summary::after{content:'';width:5px;height:5px;border-right:1px solid var(--muted);border-bottom:1px solid var(--muted);transform:rotate(45deg)}
+#shopView details[open]>summary::after{transform:rotate(225deg)}
+#shopView summary strong{font-size:13px;font-weight:600;overflow-wrap:anywhere}
+#shopView .marker{width:46px;height:42px;display:grid;place-items:center;border-radius:9px;background:var(--tile)}
+#shopView .marker svg{width:43px;height:auto}
+#shopView .locked summary strong,#shopView .state,#shopView details p{color:var(--muted)}
+#shopView .state{font-size:11px;white-space:nowrap}
+#shopView .ready .state,#shopView .next .state{color:#385d43}
+#shopView .next .state{font-weight:600}
+#shopView details p{margin:1px 9px 8px 62px;font-size:12px}

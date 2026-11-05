@@ -375,6 +375,7 @@ function renderShop(completedDays){
   const progress=$('shopUnlockProgress');
   progress.max=milestone.day;
   progress.value=Math.min(completedDays,milestone.day);
+  $('shopUnlockHeading').textContent=next<0?'Shop progress':'Next unlock';
   $('shopNextUnlock').textContent=next<0?'All categories unlocked':milestone.title;
   $('shopUnlockCount').textContent=next<0?`${completedDays} days`:`${completedDays} of ${milestone.day} days`;
   $('shopNextArt').innerHTML=$('shopArt'+(next<0?shopMilestones.length-1:next)).innerHTML;

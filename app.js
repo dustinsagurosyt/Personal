@@ -283,9 +283,11 @@ document.addEventListener('keydown',event=>{
   }
 });
 
+const appTabs=['home','garden','shop'];
+
 function showView(view){
   setPebblePanel(false);
-  for(const tab of ['home','garden']){
+  for(const tab of appTabs){
     const active=tab===view;
     $(tab+'View').hidden=!active;
     $(tab+'Tab').setAttribute('aria-pressed',String(active));
@@ -294,7 +296,7 @@ function showView(view){
   window.scrollTo(0,0);
   if(view==='garden')animateEarnedGrowth();
 }
-for(const tab of ['home','garden']){
+for(const tab of appTabs){
   $(tab+'Tab').onclick=()=>showView(tab);
 }
 

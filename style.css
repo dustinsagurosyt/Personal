@@ -27,7 +27,7 @@
 
 
 main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
-.app-dock{position:fixed;z-index:5;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;width:min(284px,calc(100% - 32px));padding:5px;border:1px solid #ffffff2c;border-radius:999px;background:rgba(36,62,44,.95);box-shadow:0 6px 22px #243e2c38;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.app-dock{position:fixed;z-index:5;left:50%;bottom:calc(12px + env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;width:min(330px,calc(100% - 32px));padding:5px;border:1px solid #ffffff2c;border-radius:999px;background:rgba(36,62,44,.95);box-shadow:0 6px 22px #243e2c38;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
 .app-dock button{flex:1 1 0;min-width:0;position:relative;display:flex;align-items:center;justify-content:center;gap:7px;border-radius:999px;color:var(--surface);font-size:13px;font-weight:600;min-height:48px}
 .app-dock button[aria-pressed=true]{background:#516b45}
 .app-dock svg{width:20px;height:20px;flex:none;transition:transform 150ms ease}
@@ -39,7 +39,7 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
     content:"";
     position:absolute;
     inset:5px auto 5px 5px;
-    width:calc(50% - 7px);
+    width:calc((100% - 18px)/3);
     border-radius:inherit;
     background:#516b45;
     pointer-events:none;
@@ -47,6 +47,7 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
     transition:transform 260ms cubic-bezier(.22,.82,.32,1.04);
   }
   .app-dock:has(#gardenTab[aria-pressed=true])::before{transform:translateX(calc(100% + 4px))}
+  .app-dock:has(#shopTab[aria-pressed=true])::before{transform:translateX(calc(200% + 8px))}
   .app-dock button[aria-pressed=true]{background:transparent}
 }
 @media(prefers-reduced-motion:reduce){

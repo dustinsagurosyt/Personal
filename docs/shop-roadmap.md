@@ -62,6 +62,8 @@ Show progress toward only the next category at the top of Shop. For example, “
 
 ## Companion Shop
 
+**Open follow-up — Fix companion movement in the Playground.** Review all eight companions at phone size. Give each species a distinct route and gait, smooth out turns and landings, and keep movement inside the assigned plant card. Check that the leaves and pot naturally cover companions on behind-the-plant passes. Review the animations in the Playground before shipping them.
+
 Proposed unlock: complete both goals on any 7 days. The unlock itself is free, and the days can be spread out.
 Once unlocked, players can preview and buy any available companion without a required purchase order.
 

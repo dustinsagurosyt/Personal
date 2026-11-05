@@ -114,9 +114,8 @@ function renderPebbleProgress(streak){
   $('pebbleBalance').textContent=`${pebbles} ${pebbles===1?'pebble':'pebbles'}`;
   const progress=streak%PEBBLE_BONUS_INTERVAL;
   const remaining=PEBBLE_BONUS_INTERVAL-progress;
-  $('pebbleStreak').textContent=`${streak}-day streak`;
   $('pebbleBonus').textContent=`+${PEBBLE_STREAK_BONUS} pebbles`;
-  $('pebbleCountdown').textContent=`${remaining} more ${remaining===1?'day':'days'} in a row`;
+  $('pebbleCountdown').textContent=`${remaining} ${remaining===1?'day':'days'} left`;
   $('pebbleDots').setAttribute('aria-label',`${progress} of ${PEBBLE_BONUS_INTERVAL} days toward the next bonus`);
   $('pebbleDots').innerHTML='<span class="filled"></span>'.repeat(progress)+'<span></span>'.repeat(remaining);
 

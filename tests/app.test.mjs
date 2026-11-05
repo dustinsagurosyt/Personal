@@ -179,15 +179,16 @@ test('the shared pebble popover shows progress toward the next bonus',()=>{
   h.el('pebbleToggle').onclick();
   assert.equal(h.el('pebblePanel').hidden,false);
   assert.equal(h.el('pebbleToggle').getAttribute('aria-expanded'),'true');
-  assert.equal(h.el('pebbleStreak').textContent,'3-day streak');
-  assert.equal(h.el('pebbleCountdown').textContent,'2 more days in a row');
+  assert.equal(h.el('pebbleCountdown').textContent,'2 days left');
   assert.equal(h.el('pebbleDots').getAttribute('aria-label'),'3 of 5 days toward the next bonus');
   h.el('gardenTab').onclick();
   assert.equal(h.el('pebblePanel').hidden,true);
   h.el('pebbleToggle').onclick();
   assert.equal(h.el('pebblePanel').hidden,false);
+  h.run('renderPebbleProgress(4)');
+  assert.equal(h.el('pebbleCountdown').textContent,'1 day left');
   h.run('renderPebbleProgress(5)');
-  assert.equal(h.el('pebbleCountdown').textContent,'5 more days in a row');
+  assert.equal(h.el('pebbleCountdown').textContent,'5 days left');
 });
 
 test('Shop uses the shared navigation and pebble balance',()=>{

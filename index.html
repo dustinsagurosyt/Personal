@@ -9,7 +9,7 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Attention Reset">
-  <link rel="stylesheet" href="style.css?v=44">
+  <link rel="stylesheet" href="style.css?v=45">
 </head>
 <body>
 <main>
@@ -20,11 +20,6 @@
       <button type="button" id="pebbleToggle" class="pebble-balance" aria-expanded="false" aria-controls="pebblePanel">
         <span id="pebbleBalance">0 pebbles</span>
       </button>
-      <div id="pebblePanel" class="pebble-panel" hidden>
-        <div class="pebble-panel-heading"><strong id="pebbleStreak">0-day streak</strong><span id="pebbleBonus"></span></div>
-        <div id="pebbleDots" class="pebble-dots" role="img"></div>
-        <p id="pebbleCountdown"></p>
-      </div>
     </div>
   </header>
 
@@ -78,6 +73,14 @@
   </section>
 </main>
 
+<div id="pebblePanel" class="pebble-panel" hidden>
+  <div class="pebble-panel-heading">
+    <strong id="pebbleBonus"></strong>
+    <div id="pebbleDots" class="pebble-dots" role="img"></div>
+  </div>
+  <p id="pebbleCountdown"></p>
+</div>
+
 <nav class="app-dock" aria-label="App navigation">
   <button id="homeTab" type="button" aria-controls="homeView" aria-pressed="true">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 8-7a1.5 1.5 0 0 1 2 0l8 7v9a2 2 0 0 1-2 2h-4v-6a3 3 0 0 0-6 0v6H5a2 2 0 0 1-2-2z" class="dock-icon-fill"/></svg>
@@ -104,6 +107,6 @@
   </div>
 </dialog>
 
-<script type="module" src="app.js?v=44"></script>
+<script type="module" src="app.js?v=45"></script>
 </body>
 </html>

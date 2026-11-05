@@ -67,7 +67,7 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 .next-plot strong{font-size:13px}
 
 .pebble-balance[aria-expanded=true]{background:#d8e5d2}
-.pebble-panel{position:fixed;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:12px;width:min(224px,calc(100% - 32px));left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);padding:7px 10px;border:1px solid var(--forest);border-radius:12px;background:var(--forest);box-shadow:0 4px 14px #243e2c15;animation:pebble-nudge-in 180ms ease-out}
+.pebble-panel{position:fixed;z-index:6;display:flex;align-items:center;gap:9px;width:max-content;max-width:calc(100% - 32px);left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translateX(-50%);padding:7px 10px;border:1px solid var(--forest);border-radius:12px;background:var(--forest);box-shadow:0 4px 14px #243e2c15;animation:pebble-nudge-in 180ms ease-out}
 .pebble-panel-copy strong{display:block;color:var(--surface);font-size:12px;font-weight:600}
 .pebble-panel p{margin:0;color:#d6e4d2;font-size:11px}
 .pebble-dots{display:flex;flex:none;gap:4px}

@@ -15,13 +15,13 @@ function harness(initial={},timer,initialTime='2026-11-03T12:00:00'){
   for(const match of html.matchAll(/\bid="([^"]+)"/g))roots.set(match[1],new Element(match[1]));
   roots.get('gardenView').hidden=true;
   roots.get('shopView').hidden=true;
-  roots.get('pebblePanel').hidden=true;
+  roots.get('pebblePanel').setAttribute('aria-hidden','true');
   const find=(id)=>{if(roots.has(id))return roots.get(id);const visit=el=>{if(el.id===id)return el;for(const c of el.children){const r=visit(c);if(r)return r}};for(const root of roots.values()){const r=visit(root);if(r)return r}return null};
   const storage=new Map(Object.entries(initial));if(timer)storage.set('attention-reset-gratitude-timer-v1',JSON.stringify(timer));
   const intervals=[];const NativeDate=Date;class Clock extends NativeDate{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
   const context={Date:Clock,Intl,Map,Set,console,Blob,URL,localStorage:{getItem:k=>storage.get(k)??null,setItem:(k,v)=>storage.set(k,v)},document:{hidden:false,getElementById:find,createElement:()=>new Element,querySelector:()=>null,addEventListener:(n,f)=>listeners[n]=f},window:{scrollTo(){},addEventListener:(n,f)=>listeners[n]=f},requestAnimationFrame:f=>f(),setInterval:f=>intervals.push(f),setTimeout:()=>{},matchMedia:()=>({matches:true})};
   vm.createContext(context);vm.runInContext(model+'\n'+plants+'\n'+app,context);
-  return {el:find,storage,run:code=>vm.runInContext(code,context),advance:ms=>{now+=ms;intervals.forEach(f=>f())}};
+  return {el:find,storage,scroll:()=>listeners.scroll(),run:code=>vm.runInContext(code,context),advance:ms=>{now+=ms;intervals.forEach(f=>f())}};
 }
 test('month tabs, Sunday-first alignment, swipe, and old history still work',()=>{
   const h=harness({'attention-reset-v1':JSON.stringify({start:'2026-11-01',days:{'2026-11-02':{focus:true,minutes:59,thoughts:'Legacy note'}}})});assert.equal(h.el('monthTitle').textContent,'November');assert.deepEqual(h.el('monthTabs').children.map(tab=>tab.textContent),['Sep','Oct','Nov','Dec']);assert.equal(h.el('calendar').children[0].dataset.date,'2026-11-01');assert.equal(h.el('completedDays').textContent,1);
@@ -175,20 +175,23 @@ test('the shared pebble popover shows progress toward the next bonus',()=>{
   const done={gratitudeDone:true,gratitudeText:'A small moment',minutes:10};
   const days=Object.fromEntries(['2026-11-01','2026-11-02','2026-11-03'].map(key=>[key,done]));
   const h=harness({'attention-reset-v1':JSON.stringify({days})});
-  assert.equal(h.el('pebblePanel').hidden,true);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'true');
   h.el('pebbleToggle').onclick();
-  assert.equal(h.el('pebblePanel').hidden,false);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'false');
   assert.equal(h.el('pebbleToggle').getAttribute('aria-expanded'),'true');
   assert.equal(h.el('pebbleCountdown').textContent,'2 days left');
   assert.equal(h.el('pebbleDots').getAttribute('aria-label'),'3 of 5 days toward the next bonus');
   h.el('gardenTab').onclick();
-  assert.equal(h.el('pebblePanel').hidden,true);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'true');
   h.el('pebbleToggle').onclick();
-  assert.equal(h.el('pebblePanel').hidden,false);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'false');
   h.run('renderPebbleProgress(4)');
   assert.equal(h.el('pebbleCountdown').textContent,'1 day left');
   h.run('renderPebbleProgress(5)');
   assert.equal(h.el('pebbleCountdown').textContent,'5 days left');
+  h.scroll();
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'true');
+  assert.equal(h.el('pebbleToggle').getAttribute('aria-expanded'),'false');
 });
 
 test('Shop uses the shared navigation and pebble balance',()=>{
@@ -199,9 +202,9 @@ test('Shop uses the shared navigation and pebble balance',()=>{
   assert.equal(h.el('shopTab').getAttribute('aria-pressed'),'true');
   assert.equal(h.el('homeView').hidden,true);
   assert.equal(h.el('gardenView').hidden,true);
-  assert.equal(h.el('pebblePanel').hidden,true);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'true');
   h.el('pebbleToggle').onclick();
-  assert.equal(h.el('pebblePanel').hidden,false);
+  assert.equal(h.el('pebblePanel').getAttribute('aria-hidden'),'false');
   h.el('gardenTab').onclick();
   assert.equal(h.el('shopView').hidden,true);
   assert.equal(h.el('gardenView').hidden,false);

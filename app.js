@@ -266,17 +266,22 @@ const DAYS_PER_PLANT=15;
 let gardenLeaves;
 let pendingGrowth;
 
+const pebblePanelOpen=()=>$('pebbleToggle').getAttribute('aria-expanded')==='true';
+
 function setPebblePanel(open){
-  $('pebblePanel').hidden=!open;
+  $('pebblePanel').setAttribute('aria-hidden',String(!open));
   $('pebbleToggle').setAttribute('aria-expanded',String(open));
 }
 
-$('pebbleToggle').onclick=()=>setPebblePanel($('pebblePanel').hidden);
+$('pebbleToggle').onclick=()=>setPebblePanel(!pebblePanelOpen());
+window.addEventListener('scroll',()=>{
+  if(pebblePanelOpen())setPebblePanel(false);
+},{passive:true});
 document.addEventListener('click',event=>{
-  if(!$('pebblePanel').hidden&&!$('pebbleToggle').contains(event.target)&&!$('pebblePanel').contains(event.target))setPebblePanel(false);
+  if(pebblePanelOpen()&&!$('pebbleToggle').contains(event.target)&&!$('pebblePanel').contains(event.target))setPebblePanel(false);
 });
 document.addEventListener('keydown',event=>{
-  if(event.key==='Escape'&&!$('pebblePanel').hidden){
+  if(event.key==='Escape'&&pebblePanelOpen()){
     setPebblePanel(false);
     $('pebbleToggle').focus();
   }

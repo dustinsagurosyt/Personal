@@ -209,3 +209,19 @@ test('Shop uses the shared navigation and pebble balance',()=>{
   assert.equal(h.el('shopView').hidden,true);
   assert.equal(h.el('gardenView').hidden,false);
 });
+
+test('Shop milestones use completed days and show the correct next category',()=>{
+  const done={gratitudeDone:true,gratitudeText:'A small moment',minutes:10};
+  const days=Object.fromEntries(['2026-10-29','2026-10-31','2026-11-03'].map(key=>[key,done]));
+  const h=harness({'attention-reset-v1':JSON.stringify({days})});
+  assert.equal(h.el('shopRungStatus0').textContent,'Unlocked');
+  assert.equal(h.el('shopRungStatus1').textContent,'Up next');
+  assert.equal(h.el('shopUnlockCount').textContent,'3 of 7 days');
+  h.run('renderShop(38)');
+  assert.equal(h.el('shopNextUnlock').textContent,'Structures & Displays');
+  assert.equal(h.el('shopUnlockProgress').value,38);
+  assert.equal(h.el('shopRungStatus5').textContent,'Unlocked');
+  h.run('renderShop(45)');
+  assert.equal(h.el('shopNextUnlock').textContent,'All categories unlocked');
+  assert.equal(h.el('shopRungStatus6').textContent,'Unlocked');
+});

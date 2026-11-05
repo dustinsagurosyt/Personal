@@ -356,9 +356,39 @@ function drawPlots(leaves){
   animateEarnedGrowth();
 }
 
+const shopMilestones = [
+  {day:3, title:"Pot Studio"},
+  {day:7, title:"Companion Shop"},
+  {day:12, title:"Lighting & Ambience"},
+  {day:16, title:"Paths & Layout"},
+  {day:23, title:"Garden Themes"},
+  {day:31, title:"Water Features"},
+  {day:45, title:"Structures & Displays"}
+];
+let shopCompletedDays;
+
+function renderShop(completedDays){
+  if(shopCompletedDays===completedDays)return;
+  shopCompletedDays=completedDays;
+  const next=shopMilestones.findIndex(({day})=>day>completedDays);
+  const milestone=shopMilestones[next]??shopMilestones.at(-1);
+  const progress=$('shopUnlockProgress');
+  progress.max=milestone.day;
+  progress.value=Math.min(completedDays,milestone.day);
+  $('shopNextUnlock').textContent=next<0?'All categories unlocked':milestone.title;
+  $('shopUnlockCount').textContent=next<0?`${completedDays} days`:`${completedDays} of ${milestone.day} days`;
+  $('shopNextArt').innerHTML=$('shopArt'+(next<0?shopMilestones.length-1:next)).innerHTML;
+  shopMilestones.forEach(({day},index)=>{
+    const ready=completedDays>=day;
+    $('shopRung'+index).className=ready?'ready':index===next?'next':'locked';
+    $('shopRungStatus'+index).textContent=ready?'Unlocked':index===next?'Up next':`${day} days`;
+  });
+}
+
 function renderRewards(){
   const {leaves}=rewardProgress(state,today);
   drawPlots(leaves);
+  renderShop(leaves);
   $('gardenDays').textContent=`${leaves} completed ${leaves===1?'day':'days'}`;
   const grown=Math.floor(leaves/DAYS_PER_PLANT);
   $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;

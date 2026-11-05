@@ -93,9 +93,10 @@ Show progress toward the next rare pet, such as **11 of 14 days to the Moon Moth
 
 ## Saved design direction
 
-The illustrated Shop design is the current direction. It uses a forest-green Next unlock card, a category illustration that changes with the milestone, a progress bar, and compact rows with individual artwork. Category rows expand for details. The preview starts at 38 of 45 completed days with Structures & Displays up next.
+**Complete in the app.** The Shop uses the approved garden-vignette design and shows category unlocks from completed days. The design can be revised later. It uses a forest-green Next unlock card, a category illustration that changes with the milestone, a progress bar, and compact rows with individual artwork. Category rows expand for details. The preview starts at 38 of 45 completed days with Structures & Displays up next.
 
-- [Illustrated Shop design](previews/shop-unlocks-illustrated.html)
+- [Implemented garden-vignette design](previews/shop-unlocks-garden-vignettes.html)
+- [Earlier illustrated Shop design](previews/shop-unlocks-illustrated.html)
 - [Five earlier layout alternatives](previews/five-shop-unlock-layouts.html)
 - [Original interactive unlock ladder](previews/shop-unlock-preview.html)
 - [Interactive roadmap board](previews/attention-reset-shop-unlock-roadmap.html)
@@ -104,9 +105,9 @@ These files preserve the design previews. The earlier five-layout gallery uses t
 
 ## Live foundation and suggested build order
 
-The live app has Home, Garden, and Shop tabs. It awards 1 pebble per completed day and 2 extra every fifth consecutive completed day. The Shop catalogs, spending, and pet unlocks are planned.
+The live app has Home, Garden, and Shop tabs. It awards 1 pebble per completed day and 2 extra every fifth consecutive completed day. The illustrated Shop ladder and completed-day category status are live. The purchasable catalogs, spending, ownership, and pet unlocks are planned.
 
 1. Track spending and ownership.
-2. Implement completed-day category unlocks and Pot Studio.
+2. Implement Pot Studio purchases and equipping.
 3. Add the Companion Shop and pet behaviors.
 4. Add rare-pet milestone tracking.

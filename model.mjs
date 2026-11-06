@@ -38,6 +38,65 @@ export function currentStreak(state, today) {
 export const PEBBLE_BONUS_INTERVAL = 5;
 export const PEBBLE_STREAK_BONUS = 2;
 
+// Prices are keyed by companion ID, while the shop displays favorite-plant order.
+export const COMPANION_PRICES=[40,15,10,30,25,20,45,55];
+export const COMPANION_FAVORITES=[12,2,0,7,5,4,14,15];
+export const DAYS_PER_PLANT=15;
+export const POT_PRICES=[0,3,5,7,9,12,3,3,3,7,7,9,14,14,18];
+
+export function ownsPot(state,index){
+  const charge=state.potPurchases?.[index];
+  return index===0||(Number.isSafeInteger(charge)&&charge>0);
+}
+
+export function equipPot(state,index,plot,today,plotCount){
+  const price=POT_PRICES[index];
+  if(!Number.isInteger(index)||price===undefined||
+    !Number.isInteger(plot)||plot<0||plot>=plotCount)return {status:'unavailable'};
+  const owned=ownsPot(state,index);
+  if(!owned&&pebbleBalance(state,today)<price)return {status:'insufficient'};
+  const equippedPots={...state.equippedPots};
+  if(index>0){
+    for(const [previous,pot] of Object.entries(equippedPots)){
+      if(pot===index)delete equippedPots[previous];
+    }
+  }
+  equippedPots[plot]=index;
+  return {status:owned?'equipped':'purchased',state:{
+    ...state,
+    potPurchases:owned?state.potPurchases:{...state.potPurchases,[index]:price},
+    equippedPots
+  }};
+}
+
+export function companionUnlockDays(index){
+  return (COMPANION_FAVORITES[index]+1)*DAYS_PER_PLANT;
+}
+
+export function ownsCompanion(state,index){
+  const charge=state.companionPurchases?.[index];
+  return Number.isSafeInteger(charge)&&charge>0;
+}
+
+export function companionHomes(state,completedDays){
+  const homes=new Map();
+  COMPANION_FAVORITES.forEach((plot,index)=>{
+    if(ownsCompanion(state,index)&&completedDays>=companionUnlockDays(index))homes.set(String(plot),index);
+  });
+  return homes;
+}
+
+export function buyCompanion(state,index,today){
+  const price=COMPANION_PRICES[index];
+  if(!Number.isInteger(index)||!price)return {status:'unavailable'};
+  if(ownsCompanion(state,index))return {status:'owned'};
+  if(rewardProgress(state,today).leaves<companionUnlockDays(index))return {status:'locked'};
+  if(pebbleBalance(state,today)<price)return {status:'insufficient'};
+  return {status:'purchased',state:{
+    ...state,companionPurchases:{...state.companionPurchases,[index]:price}
+  }};
+}
+
 export function pebbleBalance(state, today) {
   const completed = Object.keys(state.days)
     .filter(key=>key<=today&&parseDate(key)&&complete(state.days[key],key,state))
@@ -49,7 +108,11 @@ export function pebbleBalance(state, today) {
     if(run%PEBBLE_BONUS_INTERVAL===0)balance+=PEBBLE_STREAK_BONUS;
     previous=key;
   }
-  return balance;
+  const spent=COMPANION_PRICES.reduce((total,_,index)=>
+    total+(ownsCompanion(state,index)?state.companionPurchases[index]:0),0);
+  const potSpend=POT_PRICES.reduce((total,_,index)=>
+    total+(index>0&&ownsPot(state,index)?state.potPurchases[index]:0),0);
+  return Math.max(0,balance-spent-potSpend);
 }
 
 export function monthDates(year, month) {
@@ -73,7 +136,18 @@ export function normalizeState(value,today) {
   if (!value || typeof value !== 'object' || !value.days || typeof value.days !== 'object' || Array.isArray(value.days)) return {start:today,gratitudeSince:today,days:{}};
   // Keep legacy notes and other saved fields in the backup, without displaying
   // or requiring the removed habits in the everyday interface.
-  return {...value,start:parseDate(value.start)?value.start:today,gratitudeSince:parseDate(value.gratitudeSince)?value.gratitudeSince:today,days:{...value.days}};
+  const state={...value,start:parseDate(value.start)?value.start:today,gratitudeSince:parseDate(value.gratitudeSince)?value.gratitudeSince:today,days:{...value.days}};
+  if(value.equippedPots&&typeof value.equippedPots==='object'){
+    const seen=new Set();
+    state.equippedPots=Object.fromEntries(Object.entries(value.equippedPots).filter(([,pot])=>{
+      if(!Number.isInteger(pot)||POT_PRICES[pot]===undefined||!ownsPot(state,pot))return false;
+      if(pot===0)return true;
+      if(seen.has(pot))return false;
+      seen.add(pot);
+      return true;
+    }));
+  }
+  return state;
 }
 export function recordFor(state,key) {
   const record=state.days[key];
@@ -101,3 +175,4 @@ export function rewardProgress(state, today) {
   }
   return {leaves, branches: Math.floor(leaves / 5), entries: gratitudeDates.length, capsules};
 }
+

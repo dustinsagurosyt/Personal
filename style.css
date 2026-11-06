@@ -110,3 +110,199 @@ main{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
 #shopView .shop-catalog li div{display:flex;align-items:baseline;justify-content:space-between;gap:8px;font-size:13px}
 #shopView .shop-catalog li span{flex:none;color:var(--forest);font-size:11px}
 #shopView .shop-catalog li p{margin:3px 0 0;color:var(--muted);font-size:12px}
+
+/* Pot Studio and Companion Shop */
+#pot-studio-gallery *{box-sizing:border-box}
+#pot-studio-gallery .pot-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+#pot-studio-gallery button{display:flex;flex-direction:column;min-width:0;padding:8px;border:1px solid transparent;border-radius:13px;background:var(--tile);text-align:left;color:#283b2e;font:inherit}
+#pot-studio-gallery button[aria-pressed=true]{border-color:#698f63}
+#pot-studio-gallery .pot-art{display:grid;place-items:center;width:100%;height:76px}
+#pot-studio-gallery .pot-art svg{display:block;width:min(100%,76px);max-height:73px;height:auto}
+#pot-studio-gallery .pot-label{display:grid;gap:3px}
+#pot-studio-gallery .pot-label strong{font-size:12px;line-height:1.25;overflow-wrap:anywhere}
+#pot-studio-gallery .pot-label span,#pot-studio-gallery .pot-selection{font-size:11px;color:#566651}
+#pot-studio-gallery .pot-selection{margin:0 0 12px}
+#companion-lookbook *{box-sizing:border-box}
+#companion-lookbook [hidden]{display:none!important}
+#companion-lookbook .picker,#companion-lookbook .pet-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+#companion-lookbook select{min-height:44px;max-width:75%;padding:6px 9px;border:1px solid #cbd5c2;border-radius:9px;background:#fffef8;color:inherit;font:inherit}
+#companion-lookbook .pet-heading{margin:12px 0 8px}
+#companion-lookbook .pet-heading span{border-radius:999px;padding:4px 8px;background:#e3eddd;font-size:12px}
+#companion-lookbook .pet-designs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#companion-lookbook button{display:flex;flex-direction:column;min-width:0;min-height:96px;align-items:flex-start;padding:6px;border:1px solid transparent;border-radius:13px;background:var(--tile);color:inherit;font:inherit;text-align:left}
+#companion-lookbook button[aria-pressed=true]{border-color:#698f63}
+#companion-lookbook button svg{display:block;width:min(100%,74px);height:auto;margin:auto}
+#companion-lookbook button strong{font-size:11px;overflow-wrap:anywhere}
+#companion-lookbook .large-look{margin:10px 0;padding:6px 10px;border-radius:12px;background:var(--tile);display:flex;align-items:center;gap:12px}
+#companion-lookbook .large-art svg{display:block;width:108px;height:auto}
+#companion-lookbook .default-look{border-color:#aabfa2}
+#companion-lookbook .default-look[aria-pressed=true]{border-color:#698f63}
+#companion-lookbook .default-look span{font-size:10px;color:#566651}
+
+
+.compare-pets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+#companion-lookbook .compare-content button{min-height:44px}
+#companion-lookbook .compare-pets button{display:flex;flex-direction:column;align-items:flex-start;min-width:0;border-radius:13px;padding:8px;background:var(--tile);color:var(--ink);text-align:left}
+#companion-lookbook .compare-pets svg{display:block;width:min(100%,78px);height:auto;margin:auto}
+.compare-pets strong{font-size:13px;line-height:1.25;overflow-wrap:anywhere}
+.compare-pets button>span:last-child{font-size:11px;color:var(--muted);overflow-wrap:anywhere}
+#companion-lookbook .compare-action{display:inline-block;min-height:44px;padding:4px 0;border:0;background:transparent;color:var(--forest);font-size:12px}
+.compare-feature{position:relative;margin:8px 0;display:grid;place-items:center;min-height:150px;padding:6px;border-radius:13px;background:var(--tile);touch-action:pan-y}
+.compare-feature svg{width:130px;height:auto}
+
+.garden-plant-card{position:relative;min-width:0}
+.garden-plant-card>.garden-plot{width:100%;height:100%}
+.plant-companion{position:absolute;top:5px;right:5px;z-index:3}
+.plant-companion.behind-plant{z-index:1}
+.companion-at-plant{display:grid;place-items:center;width:44px;height:44px;padding:0;border-radius:12px;background:var(--surface)}
+.companion-at-plant svg{display:block;width:100%;height:auto;overflow:visible}
+.garden-plant-card{container-type:inline-size}
+.companion-at-plant{background:transparent}
+.companion-at-plant:focus-visible{outline:2px solid var(--green);outline-offset:1px}
+.garden-plant-card .plant-companion{
+  --art-width:min(120px,calc(100cqw - 16px));
+  left:calc(50% + var(--art-width) * var(--home-x, 0));
+  right:auto;
+  top:calc(8px + var(--art-width) * var(--home-y, .75));
+  transform:translate(-50%,-75%);
+}
+.garden-plant-card{overflow:hidden;overflow:clip;border-radius:13px}
+.companion-at-plant{position:relative}
+.companion-at-plant svg{width:clamp(22px,33cqw,36px)}
+.companion-at-plant svg.companion-turn-pose{position:absolute;inset:0;margin:auto;pointer-events:none}
+.companion-at-plant>svg{position:relative}
+.garden-plant-card .plant-companion.bee-perch{
+  --bee-width:clamp(22px,33cqw,36px);
+  transform:translate(-50%,calc(-22px - var(--bee-width) * .225));
+}
+.garden-plant-card .plant-companion.tree-sparrow{
+  --sparrow-width:clamp(22px,33cqw,36px);
+  transform:translate(-50%,calc(-22px - var(--sparrow-width) * .25));
+}
+.garden-plant-card:has(.tree-sparrow)>.garden-plot img{transform-origin:50% 85%}
+.garden-plant-card .plant-companion.leaf-ladybug{
+  --ladybug-width:clamp(19px,25cqw,28px);
+  transform:translate(-50%,calc(-22px - var(--ladybug-width) * .22));
+}
+.leaf-ladybug .companion-at-plant>svg{width:var(--ladybug-width)}
+.companion-motion-art-hidden,
+.companion-at-plant.reacting .companion-turn-pose{display:none!important}
+/* Stack ground, back lane, plant art, and front lane in that order. */
+.garden-plant-card{--art-width:min(120px,calc(100cqw - 16px));isolation:isolate}
+.garden-plant-card>.garden-plot>img,.garden-plant-card>.garden-plot>svg{position:relative;z-index:2;pointer-events:none}
+.companion-ground-shadow{
+  position:absolute;
+  z-index:0;
+  pointer-events:none;
+  left:calc(50% + var(--art-width) * var(--ground-x,0) + var(--ground-dx,0px));
+  top:calc(8px + var(--art-width) * var(--ground-y,.83) + var(--ground-dy,0px));
+  width:clamp(12px,17cqw,20px);
+  height:clamp(3px,3cqw,4px);
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:#435240;
+  opacity:calc(.12 * var(--ground-contact,0) * var(--reaction-contact,1));
+  filter:blur(.5px);
+}
+.companion-ground-shadow.ladybug-ground-shadow{width:clamp(8px,11cqw,13px)}
+@media(prefers-reduced-motion:no-preference){
+  .companion-at-plant:not(.roaming,.reacting) .companion-idle-detail{
+    transform-box:fill-box;
+    transform-origin:50% 75%;
+    animation:companion-idle 4.5s ease-in-out infinite;
+    --idle-tilt:7deg;
+    --idle-shift:0px;
+  }
+  .companion-at-plant[data-companion="2"] .companion-idle-detail,
+  .companion-at-plant[data-companion="4"] .companion-idle-detail{
+    --idle-tilt:0deg;
+    --idle-shift:-.65px;
+  }
+  .companion-at-plant[data-companion="3"] .companion-idle-detail{
+    --idle-tilt:0deg;
+    --idle-shift:-1.2px;
+  }
+  .companion-at-plant[data-companion="7"] .companion-idle-detail{--idle-tilt:5deg}
+}
+@keyframes companion-idle{
+  0%,14%,39%,100%{transform:none}
+  24%{transform:translateY(var(--idle-shift)) rotate(var(--idle-tilt))}
+  32%{transform:translateY(calc(var(--idle-shift) * .35)) rotate(calc(var(--idle-tilt) * -.35))}
+}
+
+#companion-lookbook .shop-companion-art{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:100%;
+}
+#companion-lookbook .shop-companion-art::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:13%;
+  width:min(48%,46px);
+  height:7%;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#435240;
+  opacity:.12;
+  filter:blur(.5px);
+  pointer-events:none;
+}
+#companion-lookbook .shop-companion-art>svg{position:relative}
+#companion-lookbook .compare-feature .shop-companion-art::before{width:min(48%,70px)}
+.companion-scene-prop{visibility:hidden}
+#companion-lookbook .shop-companion-art .companion-scene-prop{visibility:visible}
+.companion-price-badge{position:absolute;top:8px;right:8px;padding:5px 10px;border-radius:999px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:650}
+.companion-checkout{display:grid;gap:8px;margin-top:12px}
+.companion-checkout-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.companion-checkout h2{margin:0;font-size:22px;line-height:1.15}
+:is(#companion-lookbook,#pot-studio-gallery) .companion-buy{display:grid;place-items:center;min-width:84px;min-height:44px;padding:6px 12px;border-radius:12px;background:var(--forest);color:var(--surface);text-align:center;font-weight:650}
+:is(#companion-lookbook,#pot-studio-gallery) .companion-buy:disabled{background:var(--soft);color:var(--ink);opacity:1}
+.companion-checkout p{margin:0;color:var(--muted);font-size:13px}
+.companion-checkout p:empty{display:none}
+.companion-checkout .companion-favorite{display:inline-flex;justify-self:start;align-items:center;gap:8px;padding:5px 10px;border-radius:999px;background:var(--soft)}
+.companion-favorite strong{color:var(--ink);font-weight:650}
+.companion-checkout [role="status"]{text-align:center}
+
+.companion-detail-sheet{
+  position:fixed;
+  inset:auto 0 0;
+  box-sizing:border-box;
+  width:min(100%,640px);
+  max-width:none;
+  max-height:min(85dvh,560px);
+  margin:0 auto;
+  padding:12px 16px max(16px,env(safe-area-inset-bottom));
+  overflow:auto;
+  overscroll-behavior:contain;
+  border:0;
+  border-radius:20px 20px 0 0;
+  background:var(--canvas);
+  color:var(--ink);
+  box-shadow:0 -10px 26px #253b2d20;
+}
+.companion-detail-sheet::backdrop{background:#253b2d45}
+.companion-sheet-top{display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px}
+#companion-lookbook .companion-sheet-close{display:grid;place-items:center;min-height:44px;padding:6px 12px;border-radius:10px;background:var(--soft);color:var(--forest);font-weight:650}
+body:has(.companion-detail-sheet[open]){overflow:hidden}
+@media(prefers-reduced-motion:no-preference){
+  .companion-detail-sheet[open]::backdrop{animation:companion-sheet-scrim 260ms ease-out both}
+  .companion-detail-sheet.is-closing::backdrop{animation:companion-sheet-scrim 240ms ease-in reverse both}
+}
+@keyframes companion-sheet-scrim{from{opacity:0}to{opacity:1}}
+#shopView .ladder :is(li,.next){
+  background:color-mix(in srgb,var(--row-tint,var(--surface)) 63%,var(--surface));
+}
+#shopView .ladder li{
+  border-color:color-mix(in srgb,var(--row-tint,var(--surface)) 62%,var(--line));
+}
+#pot-studio-gallery .companion-sheet-close{display:grid;place-items:center;min-height:44px;padding:6px 12px;border-radius:10px;background:var(--soft);color:var(--forest);font-weight:650}
+.pot-sheet-art{display:grid;place-items:center;width:100%}
+.pot-sheet-art :is(svg,img){display:block;width:min(132px,100%);height:auto}
+
+.pot-plant-tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+#pot-studio-gallery .pot-plant-tile{display:flex;flex-direction:row;align-items:center;gap:6px;min-height:44px;padding:5px 7px;border-radius:10px;background:var(--soft);font-size:12px}
+#pot-studio-gallery .pot-plant-tile[aria-pressed="true"]{border-color:#78946f;background:#dce8d6}
+.pot-plant-tile img{flex:none;width:30px;height:auto}

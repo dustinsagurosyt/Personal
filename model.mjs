@@ -153,8 +153,11 @@ export function recordFor(state,key) {
   const record=state.days[key];
   return record && typeof record === 'object' && !Array.isArray(record) ? record : {};
 }
+export function canEditDate(key,today) {
+  return !!parseDate(key) && key >= addDays(today,-2) && key <= today;
+}
 export function updateRecord(state,key,patch,today) {
-  if (!parseDate(key) || key > today) throw new Error('Only today and past dates can be edited.');
+  if (!canEditDate(key,today)) throw new Error('Only today and the previous two days can be edited.');
   return {...state,start:state.start && state.start<key?state.start:key,days:{...state.days,[key]:{...recordFor(state,key),...patch}}};
 }
 

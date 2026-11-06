@@ -1,4 +1,4 @@
-import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, PEBBLE_BONUS_INTERVAL, PEBBLE_STREAK_BONUS, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress, DAYS_PER_PLANT, POT_PRICES, ownsPot, equipPot, COMPANION_PRICES, COMPANION_FAVORITES, companionHomes, companionUnlockDays, ownsCompanion, buyCompanion } from './model.mjs?v=55';
+import { STORAGE_KEY, MONTHS, dateKey, parseDate, monthDates, monthStats, currentStreak, pebbleBalance, PEBBLE_BONUS_INTERVAL, PEBBLE_STREAK_BONUS, normalizeState, recordFor, updateRecord, videoGoal, practiceGoal, complete, rewardProgress, DAYS_PER_PLANT, POT_PRICES, ownsPot, equipPot, COMPANION_PRICES, COMPANION_FAVORITES, companionHomes, companionUnlockDays, ownsCompanion, buyCompanion, canEditDate } from './model.mjs?v=56';
 import { gardenSpecies } from './plants.mjs?v=18';
 
 const $=id=>document.getElementById(id);
@@ -18,7 +18,7 @@ let journalDate=today;
 let timer={date:today,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};
 try {
   const saved=JSON.parse(localStorage.getItem(TIMER_KEY));
-  if(saved && parseDate(saved.date) && saved.date<=today && saved.mode==='gratitude' && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=300 && Number.isFinite(saved.deadline) && saved.deadline>=0){
+  if(saved && parseDate(saved.date) && canEditDate(saved.date,today) && saved.mode==='gratitude' && Number.isFinite(saved.remaining) && saved.remaining>=0 && saved.remaining<=300 && Number.isFinite(saved.deadline) && saved.deadline>=0){
     timer=saved;
     timer.remaining=Math.min(timer.remaining,GRATITUDE_SECONDS);
     if(timer.deadline)timer.deadline=Math.min(timer.deadline,Date.now()+GRATITUDE_SECONDS*1000);
@@ -43,8 +43,9 @@ function renderSave(){
 }
 function saveTimer(){try{localStorage.setItem(TIMER_KEY,JSON.stringify(timer))}catch{$('timerNote').textContent='This timer cannot be saved across reloads on this browser.'}}
 function setRecord(patch,key=selected){
-  if(key>today)return;
-  state=updateRecord(state,key,patch,today);
+  const currentDate=dateKey();
+  if(!canEditDate(key,currentDate))return;
+  state=updateRecord(state,key,patch,currentDate);
   saveState();renderProgress();renderDailyStatus();
 }
 function renderYears(){
@@ -141,7 +142,9 @@ function renderDailyStatus(){
   $('gratitudeDone').checked=practice;
   const legacy=selected<state.gratitudeSince && typeof record.gratitudeDone!=='boolean' && typeof record.focus==='boolean';
   $('gratitudeLabel').textContent=legacy?'Previous focus session':'1-minute gratitude';
-  $('openJournal').textContent=timer.date===selected&&timer.deadline?'Continue ↗':record.gratitudeText?.trim()?'Read ↗':'Write ↗';
+  const editable=canEditDate(selected,today),hasWriting=!!record.gratitudeText?.trim();
+  $('openJournal').disabled=!editable&&!hasWriting;
+  $('openJournal').textContent=editable&&timer.date===selected&&timer.deadline?'Continue ↗':hasWriting?'Read ↗':'Write ↗';
   $('videoMark').classList.toggle('done',video);
   const raw=record.minutes;let message='',tone='';
   if(raw!==''&&raw!==undefined&&raw!==null){const n=Number(raw);if(!Number.isFinite(n)||n<0||n>1440){message='Enter minutes between 0 and 1440.';tone='error'}else if(n>=60){message='60 minutes or more today. Keep the record and begin again with one small step.';tone='error'}}
@@ -153,7 +156,10 @@ function renderDay(){
   $('dayTitle').textContent=isFuture()?`${MONTHS[viewMonth]} preview`:selected===today?'Today, '+parseDate(selected).toLocaleDateString(undefined,{month:'short',day:'numeric'}):parseDate(selected).toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
 
   $('gratitudeDone').checked=practiceGoal(record,selected,state);$('minutes').value=record.minutes??'';
-  for(const id of ['gratitudeDone','minutes','openJournal'])$(id).disabled=isFuture();$('futureMessage').hidden=!isFuture();
+  const editable=canEditDate(selected,today);
+  for(const id of ['gratitudeDone','minutes'])$(id).disabled=!editable;
+  $('futureMessage').hidden=!isFuture();
+  $('lockedMessage').hidden=editable||isFuture();
   renderDailyStatus();renderSave();renderTimer();
 }
 function selectDay(key){
@@ -186,6 +192,7 @@ function moveMonth(amount,focusTab=false){showMonth(viewYear,viewMonth+amount);i
 $('previousMonth').onclick=()=>moveMonth(-1);$('nextMonth').onclick=()=>moveMonth(1);$('year').onchange=()=>{const year=Number($('year').value),limit=upcomingMonth(),month=year===limit.getFullYear()?Math.min(viewMonth,limit.getMonth()):viewMonth;showMonth(year,month)};
 $('today').onclick=()=>selectDay(today);
 $('gratitudeDone').onchange=()=>{
+  if(!canEditDate(selected,dateKey())){renderDay();return}
   const record=currentRecord();
   if(selected<state.gratitudeSince && typeof record.gratitudeDone!=='boolean' && typeof record.focus==='boolean'){setRecord({focus:$('gratitudeDone').checked});return}
   if($('gratitudeDone').checked&&!record.gratitudeText?.trim()){$('gratitudeDone').checked=false;openJournal(selected,true);$('timerNote').textContent='Write a little gratitude before completing this goal.';return}
@@ -208,31 +215,39 @@ function journalSaveStatus(){
   status.classList.toggle('error',!!storageError);
 }
 function openJournal(key=selected,autostart=false){
+  const editable=canEditDate(key,dateKey());
+  if(!editable&&!recordFor(state,key).gratitudeText?.trim())return;
   journalDate=key;
   $('journalDate').textContent=longDate(key);$('gratitudeText').value=recordFor(state,key).gratitudeText||'';
   $('timerNote').textContent='';journalSaveStatus();
   if(!$('journalDialog').open)$('journalDialog').showModal();
-  if(autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};startOrPause()}
+  if(editable&&autostart&&!timer.deadline&&(!aligned()||(!timer.started&&!timer.finished))){timer={date:key,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};startOrPause()}
   renderTimer();
 }
 function renderTimer(){
+  const editable=canEditDate(journalDate,today);
+  $('gratitudeText').readOnly=!editable;
+  $('journalTitle').textContent=editable?'What am I grateful for?':'Gratitude entry';
+  $('timerFace').hidden=!editable;
+  $('journalControls').hidden=!editable;
+  if(!editable)$('timerNote').textContent='';
   let seconds=remainingSeconds();
-  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(aligned())$('timerNote').textContent='One minute is up. Tap the checkmark when your entry is ready.'}
+  if(timer.deadline&&seconds===0){timer.deadline=0;timer.remaining=0;timer.finished=true;saveTimer();if(editable&&aligned())$('timerNote').textContent='One minute is up. Tap the checkmark when your entry is ready.'}
   if(!aligned())seconds=GRATITUDE_SECONDS;
   $('clock').textContent=String(Math.floor(seconds/60)).padStart(2,'0')+':'+String(seconds%60).padStart(2,'0');
-  const running=aligned()&&!!timer.deadline,otherRunning=!aligned()&&!!timer.deadline;
+  const running=aligned()&&!!timer.deadline,otherRunning=editable&&!aligned()&&!!timer.deadline;
   $('pauseIcon').textContent=running?'Ⅱ':'▶';$('startTimer').setAttribute('aria-label',running?'Pause timer':aligned()&&timer.started&&!timer.finished?'Resume timer':'Start timer');
-  $('startTimer').disabled=otherRunning||journalDate>today;$('resetTimer').disabled=otherRunning;
+  $('startTimer').disabled=!editable||otherRunning;$('resetTimer').disabled=!editable||otherRunning;$('finishJournal').disabled=!editable;
   $('timerFace').style.setProperty('--elapsed',Math.max(0,Math.min(1,1-seconds/GRATITUDE_SECONDS))*360+'deg');
   $('activeSession').hidden=!otherRunning;
   if(otherRunning)$('timerNote').textContent='Another timer is running for '+longDate(timer.date)+'. Your writing here will still save.';
 }
 function startOrPause(){
+  if(!canEditDate(journalDate,dateKey()))return;
   if(!aligned()&&timer.deadline){renderTimer();return}
   if(aligned()&&timer.deadline){timer.remaining=remainingSeconds();timer.deadline=0;$('timerNote').textContent='Paused.'}
   else{
     if(!aligned()||timer.finished)timer={date:journalDate,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};
-    if(timer.date>today)return;
     timer.deadline=Date.now()+timer.remaining*1000;timer.started=true;$('timerNote').textContent='';
   }
   saveTimer();renderTimer();renderDailyStatus();
@@ -246,11 +261,12 @@ $('gratitudeText').oninput=()=>{
 };
 $('startTimer').onclick=startOrPause;
 $('resetTimer').onclick=()=>{
-  if(!aligned()&&timer.deadline)return;
+  if(!canEditDate(journalDate,dateKey())||(!aligned()&&timer.deadline))return;
   timer={date:journalDate,mode:'gratitude',remaining:GRATITUDE_SECONDS,deadline:0,finished:false,started:false};$('timerNote').textContent='';saveTimer();renderTimer();
 };
 $('activeSession').onclick=()=>openJournal(timer.date);
 $('finishJournal').onclick=()=>{
+  if(!canEditDate(journalDate,dateKey()))return;
   const text=$('gratitudeText').value;
   if(!text.trim()){$('timerNote').textContent='Write something you’re grateful for before finishing.';$('gratitudeText').focus();return}
   setRecord({gratitudeText:text,gratitudeDone:true},journalDate);journalSaveStatus();
@@ -520,7 +536,7 @@ function renderRewards(){
   $('gardenPlants').textContent=`${grown} ${grown===1?'plant':'plants'} grown`;
 }
 
-function refreshToday(){const latest=dateKey();if(latest!==today){const followedToday=selected===today;today=latest;if(followedToday){const d=parseDate(today);selected=today;viewYear=d.getFullYear();viewMonth=d.getMonth()}renderYears();renderTabs();renderProgress();renderDay()}renderTimer()}
+function refreshToday(){const latest=dateKey();if(latest!==today){const followedToday=selected===today;today=latest;if(!canEditDate(timer.date,today)&&timer.deadline){timer.deadline=0;timer.started=false;saveTimer()}if(followedToday){const d=parseDate(today);selected=today;viewYear=d.getFullYear();viewMonth=d.getMonth()}renderYears();renderTabs();renderProgress();renderDay()}renderTimer()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshToday()});
 window.addEventListener('storage',event=>{if(event.key===STORAGE_KEY&&event.newValue){try{state=normalizeState(JSON.parse(event.newValue),today);renderYears();renderProgress();renderDay();if($('journalDialog').open){$('gratitudeText').value=recordFor(state,journalDate).gratitudeText||'';journalSaveStatus()}}catch{}}});
 setInterval(refreshToday,500);renderYears();renderTabs();renderProgress();renderDay();

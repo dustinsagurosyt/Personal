@@ -62,6 +62,8 @@ Show progress toward only the next category at the top of Shop. For example, “
 
 ## Companion Shop
 
+**Future cosmetic idea — Alternate companion looks.** Keep the default look included with each pet. Offer the five previously designed variations per companion as optional cosmetics players can preview, buy with pebbles, and equip later. Preserve each species’ shared shape and pose across its color and detail variations. Alternate looks are paused in the Playground while the default companions are being refined.
+
 **Open follow-up — Fix companion movement in the Playground.** Review all eight companions at phone size. Give each species a distinct route and gait, smooth out turns and landings, and keep movement inside the assigned plant card. Check that the leaves and pot naturally cover companions on behind-the-plant passes. Review the animations in the Playground before shipping them.
 
 Proposed unlock: complete both goals on any 7 days. The unlock itself is free, and the days can be spread out.
